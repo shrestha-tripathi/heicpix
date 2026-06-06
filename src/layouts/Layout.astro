@@ -1,23 +1,140 @@
+---
+import "../styles/global.css";
+import { site } from "../site.config";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+
+const {
+  title = site.tagline,
+  description = site.description,
+  canonical,
+  ogImage = "/og-image.png",
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title === site.tagline
+  ? `${site.name} — ${site.tagline}`
+  : `${title} | ${site.name}`;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).toString();
+const ogImageUrl = new URL(ogImage, site.url).toString();
+
+// Always include the default Organization + WebSite schemas + any per-page schema
+const baseSchemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: site.org.name,
+    url: site.org.url,
+    logo: site.org.logo,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: site.name,
+    url: site.url,
+    description: site.description,
+    publisher: {
+      "@type": "Organization",
+      name: site.org.name,
+      url: site.org.url,
+    },
+  },
+];
+
+const allSchemas = jsonLd
+  ? [...baseSchemas, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])]
+  : baseSchemas;
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    {/* Theme bootstrap — runs BEFORE stylesheet to prevent FOUC */}
+    <script is:inline define:vars={{ storageKey: `${site.storageNs}:theme` }}>
+      (function () {
+        try {
+          var stored = localStorage.getItem(storageKey);
+          var theme = stored === "light" || stored === "dark" ? stored : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    {/* Theme color — dynamically updated by theme toggle script */}
+    <meta id="theme-color-meta" name="theme-color" content={site.themeColorDark} />
+
+    {/* Favicons */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta property="og:site_name" content={site.name} />
+
+    {/* Twitter / X */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={site.twitter} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/* JSON-LD structured data */}
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(allSchemas)}
+    />
+
+    {/* Preconnect for fonts/CDN (none yet, but slot reserved) */}
+
+    {/* GA4 — production-only, env-gated */}
+    {
+      import.meta.env.PROD && site.ga4MeasurementId && (
+        <>
+          <script
+            is:inline
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${site.ga4MeasurementId}`}
+          />
+          <script is:inline define:vars={{ id: site.ga4MeasurementId }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", id, { anonymize_ip: true });
+          </script>
+        </>
+      )
+    }
+  </head>
+  <body class="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-fg)]">
+    <slot />
+  </body>
+</html>

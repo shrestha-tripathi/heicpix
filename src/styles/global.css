@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   Tailwind v4 design tokens — DO NOT use tailwind.config.js
+   Tokens live here in @theme. See .skills/tailwind-4-docs/.
+   ────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Color palette — light mode defaults via :root,
+     dark mode swapped via html[data-theme="dark"] below */
+  --color-bg: #ffffff;
+  --color-fg: #0a0a0a;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-surface: #f9fafb;
+
+  /* Accent: Apple-blue affinity (the audience comes from iPhone) */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-fg: #ffffff;
+
+  /* Status colors */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+
+  /* Type scale */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, "Apple Color Emoji",
+               "Segoe UI Emoji";
+
+  /* Radius scale */
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Theme switching — user choice wins over system preference.
+   Bootstrap script in Layout.astro sets data-theme BEFORE
+   stylesheets load, so there's no FOUC.
+   ────────────────────────────────────────────────────────────── */
+
+:root,
+html[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-fg: #0a0a0a;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-surface: #f9fafb;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --color-bg: #0a0a0a;
+  --color-fg: #fafafa;
+  --color-muted: #9ca3af;
+  --color-border: #262626;
+  --color-surface: #171717;
+  --color-accent: #60a5fa;
+  --color-accent-hover: #93c5fd;
+  --color-accent-fg: #0a0a0a;
+  color-scheme: dark;
+}
+
+/* Smooth swap on toggle (not on initial paint) */
+html {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Base layer — wrap unlayered globals so Tailwind utilities can
+   override them. Otherwise plain `a { color: ... }` beats
+   `text-[var(--color-bg)]` in the cascade and breaks button text.
+   See pitfall: tailwind-v4-global-anchor-color-cascade
+   ────────────────────────────────────────────────────────────── */
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Anchors INHERIT color by default — prose styles + utility
+     classes both win. Override per-context. */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Headings use system stack but heavier weight */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  /* Focus ring — consistent across all interactive elements */
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Accessibility: respect reduced motion
+   ────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
