@@ -26,7 +26,7 @@ export const site = {
   tagline: env.PUBLIC_SITE_TAGLINE ?? "iPhone HEIC photos to JPG or PNG, in your browser",
   description:
     env.PUBLIC_SITE_DESCRIPTION ??
-    "Convert HEIC to JPG or PNG for free. Unlimited batch, zero upload, no signup. Works in any browser.",
+    "Convert HEIC to JPG or PNG free in your browser. Drop iPhone HEIC photos, get JPGs or PNGs back. Unlimited batch, zero upload, no signup, no ads. Works on Windows, Mac, Chromebook, Android, every browser.",
 
   // URLs
   domain: siteDomain,

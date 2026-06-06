@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { site } from "../site.config";
 import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -16,12 +17,14 @@ const jsonLd = {
     { "@type": "HowToStep", position: 4, name: "Download", text: "Save as .zip or to a folder. Done." },
   ],
 };
+
+const breadcrumbLd = breadcrumb({ name: "HEIC to PNG", path: "/heic-to-png" });
 ---
 
 <Layout
   title="HEIC to PNG — lossless converter for editing and archival"
   description="Convert HEIC to PNG (lossless) in your browser. Free, unlimited, no upload. Best for editing, transparency, or maximum quality preservation."
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, breadcrumbLd]}
 >
   <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
     <header class="mb-10">

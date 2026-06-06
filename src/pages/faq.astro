@@ -3,54 +3,104 @@ import Layout from "../layouts/Layout.astro";
 import { site } from "../site.config";
 import { b } from "../lib/baseUrl";
 
+// 24 Qs sourced from real Google autocomplete + question-anchored expansions.
+// Source: docs/seo-keywords-and-faq.md Section 2.
 const faqs = [
   {
-    q: `Is ${site.name} really free? What's the catch?`,
-    a: "Yes, completely free. There is no catch. We don't even have an account system — there's nothing to sign up for. Conversion happens entirely in your browser, so we don't pay for servers to process your photos. Lifetime free, forever.",
+    q: "What is HEIC?",
+    a: "HEIC stands for High Efficiency Image Container — it's the photo format Apple uses by default on every iPhone since iOS 11 (2017). HEIC files are about half the size of JPGs at the same visual quality, which saves space on your iCloud, but they create a compatibility problem: most non-Apple software (Windows, Android, web browsers, email clients) can't open them natively.",
   },
   {
-    q: "Do my photos get uploaded?",
-    a: "No. Everything happens on your device. The conversion uses WebAssembly running inside your browser tab — your photos never touch our servers, because there are no servers to touch them. You can verify this by opening DevTools → Network tab while you convert: you'll see zero outbound file uploads.",
+    q: "What does HEIC stand for?",
+    a: "HEIC = High Efficiency Image Container. The image data inside is encoded with HEVC (the same codec used in 4K video), which is why files are so small. HEIF is the parent format — HEIC is Apple's specific HEIF-with-HEVC variant.",
   },
   {
-    q: "What's the maximum file size?",
-    a: "There's no hard size limit, but very large files (60+ megapixel iPhone Pro photos) may take a few seconds each. The practical limit is your device's memory — typically 50 photos at once on mobile, 500+ on a desktop. If you hit the limit, just convert in batches.",
+    q: "Is HEIC the same as HEIF?",
+    a: `Almost. HEIF (High Efficiency Image Format) is the underlying container standard. HEIC is Apple's name for HEIF files using the HEVC codec. Most iPhones save as .heic but the formats are functionally interchangeable. ${site.name} handles both — drop a .heic or .heif and it converts.`,
   },
   {
-    q: "Can I convert HEIC to PNG, not just JPG?",
-    a: "Yes! There's a toggle above the dropzone — pick JPG or PNG. JPG is smaller (good for sharing and web). PNG is lossless (good for editing, transparency, or archival). You can switch any time.",
+    q: "How do I convert HEIC to JPG?",
+    a: `Drop your .heic file onto ${site.name} and it converts to JPG instantly. Drag-and-drop, or tap to pick photos from your camera roll. Conversion happens in your browser — your photos never get uploaded anywhere. You can convert hundreds at a time and download them as a zip.`,
   },
   {
-    q: "Does it work on iPhone, iPad, or Android?",
-    a: `Yes. ${site.name} runs in any modern browser — Mobile Safari (iOS), Chrome (Android, Mac, Windows, Linux), Firefox, Edge. On iPhone you can pick photos directly from your camera roll.`,
+    q: "How do I open HEIC files on Windows?",
+    a: `You have two options: (1) Convert them to JPG using ${site.name} and Windows Photos will open them like any other image. (2) Install Microsoft's "HEIF Image Extensions" from the Microsoft Store, which adds HEIC support to Windows 10 and 11. Option 1 is more universal — converted JPGs work in every app, while the Microsoft codec only helps inside specific apps.`,
   },
   {
-    q: "Why does my Android phone show a 'Cannot open HEIC' error?",
-    a: `HEIC is Apple's photo format and Android doesn't read it natively. That's the problem ${site.name} solves: someone sends you a HEIC, drop it into ${site.name}, get a JPG that opens anywhere.`,
+    q: "How do I open HEIC files on a Mac?",
+    a: `macOS opens HEIC natively in Preview and Photos — that part already works. The pain comes when you try to send a HEIC to someone on Windows or Android, or upload to a website that doesn't accept HEIC. For those cases, drop the file into ${site.name} to get a universal JPG.`,
   },
   {
-    q: "Can I keep the original EXIF data (date, location, camera info)?",
-    a: "In the free version, EXIF is stripped during conversion (this is the simpler implementation). EXIF preservation is on the roadmap and will be part of a paid one-time upgrade.",
+    q: "Can Chromebooks open HEIC files?",
+    a: `ChromeOS does not open HEIC files natively — the Gallery app shows "format not supported." ${site.name} works perfectly in Chrome on Chromebook because everything runs in the browser. Drop your HEIC, get a JPG or PNG back, no install or extension needed.`,
   },
   {
-    q: "Why are my PNG files so much bigger?",
-    a: "PNG is lossless compression — it preserves every pixel exactly. A 700KB HEIC can become a 3-5MB PNG. For photos, JPG at 0.92 quality is usually indistinguishable to the eye and 3-5× smaller. Pick PNG only when you need exact pixel data (editing, screenshots, alpha channels).",
+    q: "How do I open HEIC files on Android?",
+    a: `Newer Android versions (12+) on Pixel and Samsung devices can open HEIC files. Older Android versions and many file-manager apps still can't. The reliable fix: open ${site.name} in Chrome on your Android phone, drop the HEIC, get a JPG back. Works on every Android browser.`,
+  },
+  {
+    q: "Why is my iPhone saving photos as HEIC?",
+    a: "Because Apple made HEIC the default in iOS 11 (2017) to save storage space — HEIC files are about half the size of JPGs at the same visual quality. You can change this in Settings → Camera → Formats → \"Most Compatible\" to force JPG instead, but new photos will be larger.",
+  },
+  {
+    q: "How do I stop my iPhone from saving photos as HEIC?",
+    a: `Open Settings → Camera → Formats. Tap "Most Compatible" instead of "High Efficiency". New photos will save as JPG. Existing HEIC photos stay as HEIC — use ${site.name} to convert any you need to share with non-Apple users.`,
+  },
+  {
+    q: "Is HEIC better than JPEG?",
+    a: "For storage and quality: yes — HEIC files are about half the size of JPGs while looking identical. For compatibility: no — JPG opens everywhere; HEIC needs special support outside the Apple ecosystem. Use HEIC for archiving your own photo library; convert to JPG when sharing.",
+  },
+  {
+    q: "Which is better quality, HEIC or JPEG?",
+    a: "HEIC has better compression efficiency, so at the same file size HEIC looks visually cleaner than JPEG, especially in shadows and skies. At maximum quality both look indistinguishable to the human eye. Apple uses HEIC because it stores 16-bit color depth (vs JPEG's 8-bit), which matters for HDR photos and pro editing.",
+  },
+  {
+    q: "How do I send HEIC photos on WhatsApp?",
+    a: `WhatsApp accepts HEIC uploads on iOS, but they get auto-converted to JPG before sending. On Android and Web WhatsApp, HEIC support is spotty — your recipient might get a corrupted preview. The safer path: convert HEIC to JPG with ${site.name} first, then share the JPG on WhatsApp.`,
+  },
+  {
+    q: "Does Instagram support HEIC?",
+    a: `Instagram converts HEIC uploads on iOS, but Android Instagram sometimes rejects HEIC files. If you're posting from a non-Apple device or pasting a HEIC from Files into your story, convert to JPG first using ${site.name} to avoid upload errors.`,
+  },
+  {
+    q: "Does Google Photos support HEIC?",
+    a: "Google Photos stores HEIC files but displays them via on-the-fly JPG conversion. Downloading a HEIC from Google Photos via the web gives you a JPG; downloading via the mobile app preserves HEIC. If you've ever downloaded photos from Google Photos and gotten unexpected file types, that's why.",
+  },
+  {
+    q: "Can I convert HEIC to PNG?",
+    a: `Yes. ${site.name} has a JPG/PNG toggle above the drop zone — pick PNG before dropping files. PNG output is lossless (every pixel preserved exactly) and works great for editing, transparency, or archival. Files are about 3-5× larger than JPG.`,
   },
   {
     q: "Can I convert HEIC to PDF?",
-    a: "Not yet directly. You can convert HEIC → JPG here, then use any browser-based 'JPG to PDF' tool (like our sister project at worksoffline.in/pdfhub). HEIC → PDF as a single step is on the roadmap.",
+    a: `Not directly in ${site.name} right now (it's on the roadmap). For now: convert HEIC to JPG in ${site.name}, then use any browser-based "JPG to PDF" tool to combine. Most JPG-to-PDF tools support multi-image PDFs natively.`,
   },
   {
-    q: "What is .HEIF vs .HEIC?",
-    a: `HEIF (High Efficiency Image Format) is the underlying container. HEIC is Apple's name for HEIF using the HEVC codec. Most iPhones save as .heic but the formats are functionally identical. ${site.name} handles both.`,
+    q: "What's the best free HEIC converter?",
+    a: `${site.name} — we're biased, but here's the honest case: most "free" HEIC converters upload your photos to a server (privacy risk), cap you at 5 or 25 files per day (frustrating), show ads (cluttered), or require signup (annoying). ${site.name} is unlimited, browser-only, no signup, no ads, no upload, lifetime free.`,
   },
   {
-    q: "Will Google Photos / iCloud / Dropbox convert these automatically?",
-    a: `Sometimes, sometimes not. Google Photos converts to JPG when you download via web (but not via Drive sync). iCloud preserves HEIC. Dropbox keeps the original. If you've ever shared a photo and the recipient couldn't open it, that's why ${site.name} exists.`,
+    q: "Why can't I open HEIC files on Windows 10 or Windows 11?",
+    a: `Windows doesn't ship HEIC support by default. You can install "HEIF Image Extensions" from the Microsoft Store (free) to add HEIC viewing to Photos and File Explorer thumbnails. Or convert the HEIC to JPG using ${site.name} — converted JPGs open in every Windows app instantly.`,
   },
   {
-    q: "Is there an app I can install?",
-    a: `${site.name} works as a Progressive Web App. On iPhone: Safari → Share → 'Add to Home Screen'. On Android: Chrome will offer 'Install app' once you've visited the site. Once installed, you can share HEIC files directly from your photo library straight into ${site.name}.`,
+    q: "How do I convert HEIC to JPG in bulk?",
+    a: `Drop a whole folder of HEIC files onto ${site.name} and they convert in parallel. There's no per-batch limit on desktop (you can drop 500 at once). On mobile, the practical limit is 50 photos at a time due to memory constraints. After conversion, click "Download .zip" to get all your JPGs in one file.`,
+  },
+  {
+    q: `Can ${site.name} convert HEIC files I receive from email or WhatsApp?`,
+    a: `Yes. Save the HEIC attachment to your Files or Downloads folder first, then drop it into ${site.name}. On iPhone, you can also use the Share Sheet — once you've installed ${site.name} as a PWA (Add to Home Screen), "${site.shortName}" appears as an option when you share a HEIC from anywhere.`,
+  },
+  {
+    q: `Does ${site.name} work offline?`,
+    a: `Yes — once the page loads, conversion runs entirely in your browser. You can disconnect from the internet and ${site.name} will keep converting. Installing as a PWA (Add to Home Screen) caches the app so even the page loads offline. Your photos never need internet access.`,
+  },
+  {
+    q: `Are my photos uploaded anywhere when I use ${site.name}?`,
+    a: `No. Everything happens on your device using WebAssembly. You can verify this by opening DevTools → Network tab while converting — you'll see zero outbound file uploads. There are no servers handling your photos because the conversion doesn't need any.`,
+  },
+  {
+    q: `What's the file size limit on ${site.name}?`,
+    a: `There's no hard size limit per file. The practical limit is your device's memory: ~50 photos at a time on mobile, 500+ on desktop. Very large files (60+ megapixel iPhone Pro photos) take a few extra seconds each. If you hit memory limits, just convert in smaller batches.`,
   },
 ];
 
@@ -66,12 +116,21 @@ const jsonLd = {
     },
   })),
 };
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: site.name, item: site.url },
+    { "@type": "ListItem", position: 2, name: "FAQ", item: `${site.url}/faq` },
+  ],
+};
 ---
 
 <Layout
-  title="FAQ — HEIC to JPG / PNG converter questions answered"
-  description="Common questions about converting HEIC photos to JPG or PNG: file limits, privacy, EXIF data, Android compatibility, and more."
-  jsonLd={jsonLd}
+  title="HEIC FAQ — convert, open, view iPhone HEIC files explained"
+  description={`Common questions about HEIC photos: how to convert to JPG or PNG, open on Windows, Android, Chromebook, send via WhatsApp, and more. Answered by ${site.name}.`}
+  jsonLd={[jsonLd, breadcrumbLd]}
 >
   <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
     <header class="mb-10">
@@ -81,10 +140,11 @@ const jsonLd = {
         <span>FAQ</span>
       </p>
       <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
-        Frequently asked questions
+        HEIC frequently asked questions
       </h1>
       <p class="text-lg text-[var(--color-muted)]">
-        Everything you might wonder about converting iPhone HEIC photos.
+        Everything you might wonder about converting iPhone HEIC photos —
+        sourced from real Google searches.
       </p>
     </header>
 
@@ -102,13 +162,16 @@ const jsonLd = {
     </div>
 
     <div class="mt-16 p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-center">
-      <p class="text-lg font-semibold mb-2">Got more questions?</p>
-      <p class="text-sm text-[var(--color-muted)]">
-        We're building this in the open at
-        <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">
-          {site.org.name}
-        </a>. Feedback welcome.
+      <p class="text-lg font-semibold mb-2">Ready to convert?</p>
+      <p class="text-sm text-[var(--color-muted)] mb-4">
+        Drop your iPhone HEIC photos and get JPGs or PNGs back instantly.
       </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Open the converter →
+      </a>
     </div>
   </div>
 </Layout>

@@ -1,0 +1,204 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import { site } from "../../site.config";
+import { b } from "../../lib/baseUrl";
+import { breadcrumb } from "../../lib/breadcrumb";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const postSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": `${site.url}/blog/${post.id}#post`,
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  ...(post.data.updatedDate && {
+    dateModified: post.data.updatedDate.toISOString(),
+  }),
+  author: { "@type": "Organization", name: site.org.name },
+  publisher: { "@id": `${site.url}/#organization` },
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `${site.url}/blog/${post.id}`,
+  },
+  keywords: post.data.tags.join(", "),
+};
+
+const breadcrumbLd = breadcrumb(
+  { name: "Blog", path: "/blog" },
+  { name: post.data.title, path: `/blog/${post.id}` },
+);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  jsonLd={[postSchema, breadcrumbLd]}
+>
+  <article class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <a href={b("/blog")} class="hover:text-[var(--color-fg)]">Blog</a>
+      </p>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+        {post.data.title}
+      </h1>
+      <div class="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {fmtDate(post.data.pubDate)}
+        </time>
+        {post.data.tags.length > 0 && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{post.data.tags.join(" · ")}</span>
+          </>
+        )}
+      </div>
+    </header>
+
+    <div class="prose-body">
+      <Content />
+    </div>
+
+    <hr class="my-12 border-[var(--color-border)]" />
+
+    <div class="p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-center">
+      <p class="text-lg font-semibold mb-2">Convert your HEIC photos now</p>
+      <p class="text-sm text-[var(--color-muted)] mb-4">
+        Free, unlimited, no upload, no signup.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Open {site.name} →
+      </a>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  /* Prose styling for rendered markdown content.
+     :global() needed because Astro scopes class names — without it the
+     styles target .prose-body__abc123 h2 and never match the <h2> inside
+     <Content /> which has no scope hash. */
+
+  .prose-body :global(h2) {
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-fg);
+    margin-top: 3.25rem;
+    margin-bottom: 1rem;
+  }
+  .prose-body :global(h3) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+  }
+  .prose-body :global(p) {
+    color: var(--color-muted);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+  .prose-body :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose-body :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose-body :global(li) {
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+  }
+  .prose-body :global(strong) {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+  .prose-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose-body :global(a:hover) {
+    color: var(--color-accent-hover);
+  }
+  .prose-body :global(blockquote) {
+    border-left: 3px solid var(--color-border);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+  .prose-body :global(code) {
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+    font-size: 0.875em;
+    color: var(--color-fg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .prose-body :global(pre) {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    font-size: 0.875rem;
+  }
+  .prose-body :global(pre code) {
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  .prose-body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  .prose-body :global(th),
+  .prose-body :global(td) {
+    border: 1px solid var(--color-border);
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    color: var(--color-muted);
+  }
+  .prose-body :global(th) {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+  .prose-body :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    margin: 2rem 0;
+  }
+</style>

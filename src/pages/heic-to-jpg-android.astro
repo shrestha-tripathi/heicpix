@@ -1,0 +1,114 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to open HEIC files on Android",
+  description: "Convert iPhone HEIC photos to JPG on Android phones — works on Samsung, Pixel, OnePlus, every Android device.",
+  totalTime: "PT20S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name} in Chrome`, text: `Visit ${site.domain} in any Android browser — Chrome, Edge, Samsung Internet, Firefox.` },
+    { "@type": "HowToStep", position: 2, name: "Tap to pick photos", text: "Or share a HEIC directly from your photo app's share sheet (works after PWA install)." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG or PNG", text: "JPG opens in Google Photos, Gallery, WhatsApp, Instagram — anywhere." },
+    { "@type": "HowToStep", position: 4, name: "Save or share", text: "Tap Download .zip for batches, or Share to send straight to WhatsApp / Telegram / Gmail." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC on Android", path: "/heic-to-jpg-android" });
+---
+
+<Layout
+  title="HEIC to JPG on Android — open iPhone photos on Samsung, Pixel, any Android"
+  description="Received HEIC photos from an iPhone but can't open them on your Android phone? Convert HEIC to JPG instantly in your browser. Works on Samsung, Pixel, OnePlus, every Android."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC on Android</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Open HEIC files on Android
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        iPhone friend WhatsApped you a `.heic` and your Samsung / Pixel /
+        OnePlus can't preview it. Here's the fix that takes 20 seconds and
+        doesn't need an install.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix: open {site.name} in Chrome</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        {site.name} runs in any Android browser. Drop your HEIC, get a JPG,
+        share it anywhere. No Play Store install, no permissions, no ads,
+        no signup.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC to JPG now →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why doesn't Android open HEIC natively?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Android <strong class="text-[var(--color-fg)]">does</strong>
+        support HEIC since Android 10 (2019) at the OS level. But:
+      </p>
+      <ul class="list-disc pl-6 space-y-1.5 text-[var(--color-muted)] mb-4">
+        <li>Many older devices (Android 9 and earlier) don't support it</li>
+        <li>Several Samsung devices ship Gallery apps that can't render HEIC even on newer Android</li>
+        <li>WhatsApp on Android often refuses to preview HEIC attachments</li>
+        <li>Many third-party apps (file managers, image editors) skip HEIC entirely</li>
+        <li>Cloud uploads (Dropbox, OneDrive) preserve HEIC, so the recipient hits the same wall</li>
+      </ul>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Converting once to JPG removes every one of these friction points.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Install as an Android app</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Install {site.name} as a Progressive Web App and "{site.shortName}"
+        appears in your phone's share sheet. Then, anywhere you long-press
+        a HEIC and tap Share, "{site.shortName}" is in the list — tap it
+        and the file lands in the converter automatically.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        On Chrome Android: Menu → Add to Home Screen. On Samsung Internet:
+        Menu → Add page to → Home screen. See the
+        <a href={b("/install")} class="text-[var(--color-accent)] hover:underline">install guide</a>
+        for screenshots.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Alternative: stop the sender from using HEIC</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Ask the iPhone user to change Settings → Camera → Formats → "Most
+        Compatible". Their new photos will save as JPG instead of HEIC.
+        It only fixes new photos — for the HEICs they've already sent you,
+        use {site.name}.
+      </p>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC on Android now →
+      </a>
+    </div>
+  </div>
+</Layout>

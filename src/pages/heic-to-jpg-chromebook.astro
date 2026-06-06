@@ -1,0 +1,139 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to open HEIC files on a Chromebook",
+  description: "ChromeOS doesn't open HEIC files natively. Here's the 15-second browser-only fix.",
+  totalTime: "PT15S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name} in Chrome`, text: `Visit ${site.domain} on your Chromebook. No extensions, no installs.` },
+    { "@type": "HowToStep", position: 2, name: "Drop the .heic file", text: "Drag from Files app, or click to pick." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG or PNG", text: "JPG is smaller (great for sharing). PNG is lossless (great for editing)." },
+    { "@type": "HowToStep", position: 4, name: "Download the converted file", text: "Now ChromeOS Gallery, Google Drive, and any web app can open it." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC on Chromebook", path: "/heic-to-jpg-chromebook" });
+---
+
+<Layout
+  title="HEIC to JPG on Chromebook — open iPhone photos in ChromeOS"
+  description="Chromebook can't open HEIC files natively. Convert HEIC to JPG or PNG instantly in Chrome on your Chromebook. No extension to install. Free."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC on Chromebook</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Open HEIC files on a Chromebook
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        ChromeOS doesn't ship HEIC support — and the Play Store apps that
+        claim to fix it are mostly ads. Here's the browser-only fix that
+        takes 15 seconds.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix: drop into {site.name}</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        {site.name} runs entirely in Chrome (the browser, not the app). Drop
+        your .heic file, get a JPG back, save it. ChromeOS Gallery, Google
+        Drive, and every web app can open the JPG.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC to JPG now →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why doesn't ChromeOS open HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        HEIC depends on the HEVC video codec, which has patent licensing
+        costs Google chose not to pay for ChromeOS. So opening a .heic
+        directly in Files / Gallery shows "format not supported." Same
+        story for the built-in Camera app and most Chrome extensions —
+        they can read JPG/PNG/WebP but not HEIC.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Converting to JPG once solves it forever. The JPG opens in every
+        ChromeOS app, every Android app you side-load, every Linux app
+        under Crostini, and any website you upload to.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">
+        Why {site.name} vs Play Store HEIC apps?
+      </h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>
+            <strong class="text-[var(--color-fg)]">Nothing uploads.</strong>
+            Play Store HEIC apps often request "full internet access" and
+            upload your photos to their servers. {site.name} runs in
+            Chrome — photos stay on your Chromebook.
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>
+            <strong class="text-[var(--color-fg)]">No ads.</strong> Most
+            free Play Store HEIC converters are ad-supported. {site.name}
+            is ad-free, no tracking.
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>
+            <strong class="text-[var(--color-fg)]">No install.</strong>
+            Just open a tab. No Play Store, no Android Linux subsystem,
+            no extension permissions.
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>
+            <strong class="text-[var(--color-fg)]">Batch unlimited.</strong>
+            Drop a folder of 200 HEICs at once. Most Play Store apps
+            cap free conversions at 5 or 10 per day.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Install as a Chromebook app</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        {site.name} can install as a Chromebook app via the omnibox install
+        icon. Open {site.name} in Chrome, look for the install icon (⊕) at
+        the right edge of the address bar, click it, and {site.name} becomes
+        a launcher app you can pin to your shelf. See the
+        <a href={b("/install")} class="text-[var(--color-accent)] hover:underline">install guide</a>
+        for screenshots.
+      </p>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC on Chromebook now →
+      </a>
+    </div>
+  </div>
+</Layout>

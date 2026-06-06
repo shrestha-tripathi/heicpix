@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
 import DropZone from "../components/DropZone.astro";
 import FormatToggle from "../components/FormatToggle.astro";
 
@@ -102,6 +103,135 @@ const jsonLd = {
           subscription," no watermark on output. Lifetime free, forever.
         </p>
       </article>
+    </section>
+
+    <!-- Compare with competitors -->
+    <section class="max-w-4xl mx-auto mt-24 px-2">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-center mb-3">
+        How {site.name} compares
+      </h2>
+      <p class="text-[var(--color-muted)] text-center max-w-2xl mx-auto mb-8">
+        Other "free" HEIC converters add ads, caps, signups, or quietly
+        upload your photos. Here's the honest comparison.
+      </p>
+
+      <div class="overflow-x-auto rounded-xl border border-[var(--color-border)]">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+              <th class="text-left py-3 px-4 font-semibold">Tool</th>
+              <th class="text-left py-3 px-4 font-semibold">Upload?</th>
+              <th class="text-left py-3 px-4 font-semibold">Free tier limit</th>
+              <th class="text-left py-3 px-4 font-semibold">Ads?</th>
+              <th class="text-left py-3 px-4 font-semibold">Signup?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--color-border)]">
+              <td class="py-3 px-4 text-[var(--color-muted)]">iloveimg.com</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">5 files per batch</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Yes</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">For premium</td>
+            </tr>
+            <tr class="border-b border-[var(--color-border)]">
+              <td class="py-3 px-4 text-[var(--color-muted)]">cloudconvert.com</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">25 per day</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">No</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Above 25/day</td>
+            </tr>
+            <tr class="border-b border-[var(--color-border)]">
+              <td class="py-3 px-4 text-[var(--color-muted)]">online-convert.com</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">100 MB / file</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Yes (heavy)</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">For premium</td>
+            </tr>
+            <tr class="border-b border-[var(--color-border)]">
+              <td class="py-3 px-4 text-[var(--color-muted)]">heictojpg.com</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">30 per batch</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">Yes</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">No</td>
+            </tr>
+            <tr
+              class="border-t-2 border-[var(--color-accent)]"
+              style="background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);"
+            >
+              <td class="py-3 px-4 font-bold text-[var(--color-accent)]">
+                <span class="inline-flex items-center gap-2">
+                  <span class="size-2 rounded-full bg-[var(--color-accent)]" aria-hidden="true"></span>
+                  {site.name}
+                </span>
+              </td>
+              <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
+                Never — browser-only
+              </td>
+              <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
+                Unlimited
+              </td>
+              <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
+                No
+              </td>
+              <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
+                Never
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="text-xs text-[var(--color-muted)] text-center mt-4">
+        Comparison data verified 2026-06. Competitor terms may have changed since.
+      </p>
+    </section>
+
+    <!-- Platform-specific quick links -->
+    <section class="max-w-4xl mx-auto mt-20 text-center">
+      <h2 class="text-2xl font-extrabold tracking-tight mb-3">
+        On a specific device?
+      </h2>
+      <p class="text-[var(--color-muted)] mb-6 max-w-2xl mx-auto">
+        Quick guides for opening HEIC files on every platform that doesn't
+        support them natively.
+      </p>
+      <div class="flex flex-wrap gap-2 justify-center mb-8">
+        <a
+          href={b("/heic-to-jpg-windows")}
+          class="px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-surface)] text-sm text-[var(--color-fg)] transition-colors"
+        >
+          HEIC on Windows
+        </a>
+        <a
+          href={b("/heic-to-jpg-mac")}
+          class="px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-surface)] text-sm text-[var(--color-fg)] transition-colors"
+        >
+          HEIC on Mac
+        </a>
+        <a
+          href={b("/heic-to-jpg-chromebook")}
+          class="px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-surface)] text-sm text-[var(--color-fg)] transition-colors"
+        >
+          HEIC on Chromebook
+        </a>
+        <a
+          href={b("/heic-to-jpg-android")}
+          class="px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-surface)] text-sm text-[var(--color-fg)] transition-colors"
+        >
+          HEIC on Android
+        </a>
+      </div>
+
+      <p class="text-sm text-[var(--color-muted)]">
+        Need lossless instead?
+        <a
+          href={b("/heic-to-png")}
+          class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+        >
+          Convert HEIC to PNG →
+        </a>
+      </p>
     </section>
   </div>
 </Layout>

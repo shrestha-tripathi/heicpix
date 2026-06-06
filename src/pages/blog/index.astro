@@ -1,0 +1,95 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { site } from "../../site.config";
+import { b } from "../../lib/baseUrl";
+import { breadcrumb } from "../../lib/breadcrumb";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": `${site.url}/blog#blog`,
+  url: `${site.url}/blog`,
+  name: `${site.shortName} Blog`,
+  description: "Long-form posts on HEIC, image formats, browser-based tools, and photo workflows.",
+  publisher: { "@id": `${site.url}/#organization` },
+  blogPost: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    description: p.data.description,
+    datePublished: p.data.pubDate.toISOString(),
+    url: `${site.url}/blog/${p.id}`,
+    author: { "@type": "Organization", name: site.org.name },
+  })),
+};
+
+const breadcrumbLd = breadcrumb({ name: "Blog", path: "/blog" });
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+}
+---
+
+<Layout
+  title={`${site.shortName} Blog — HEIC, image formats, browser workflows`}
+  description="Long-form posts on iPhone HEIC photos, image format compatibility, browser-based conversion, and other photo workflow topics."
+  jsonLd={[blogSchema, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-12">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>Blog</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
+        {site.shortName} Blog
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Posts on HEIC, image formats, browser-based tools, and photo
+        compatibility headaches.
+      </p>
+    </header>
+
+    {
+      posts.length === 0 && (
+        <p class="text-[var(--color-muted)]">No posts yet — check back soon.</p>
+      )
+    }
+
+    <ul class="space-y-6">
+      {
+        posts.map((post) => (
+          <li>
+            <a
+              href={`${b("/blog/")}${post.id}`}
+              class="block p-6 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors"
+            >
+              <div class="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-2">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {fmtDate(post.data.pubDate)}
+                </time>
+                {post.data.tags.length > 0 && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.data.tags.join(" · ")}</span>
+                  </>
+                )}
+              </div>
+              <h2 class="text-xl font-bold mb-2 text-[var(--color-fg)]">
+                {post.data.title}
+              </h2>
+              <p class="text-sm text-[var(--color-muted)] leading-relaxed">
+                {post.data.description}
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
