@@ -1,0 +1,198 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: `Why ${site.name} is free forever`,
+  description: `Our commitment: ${site.name} will never charge, will never gate features behind a paywall, will never add ads, and will never sell your data. Here's why and how that's sustainable.`,
+  url: `${site.url}/free-forever`,
+  publisher: {
+    "@type": "Organization",
+    name: "WorksOffline",
+    url: "https://worksoffline.in",
+  },
+};
+
+const breadcrumbLd = breadcrumb([
+  { name: "Free Forever", path: "/free-forever" },
+]);
+
+const pledge = [
+  {
+    promise: "Free forever — no premium tier",
+    detail: `Every feature ${site.name} ever ships will be available to everyone at zero cost. No "pro" version. No "lifetime deal" we can later retire. No "free for personal use, paid for commercial."`,
+  },
+  {
+    promise: "No signup, ever",
+    detail: `You will never see an email-capture wall. You will never need an account. We don't even have a login system to build.`,
+  },
+  {
+    promise: "No daily caps, no batch limits",
+    detail: `Convert 1 file or 5,000. The only limit is your device's memory. We don't track usage because we never see it.`,
+  },
+  {
+    promise: "No ads, no tracking pixels, no fingerprinting",
+    detail: `Page loads once. Service worker caches the WASM. After that, the site works offline — nothing phones home. We use no third-party analytics that profile you.`,
+  },
+  {
+    promise: "No watermark on output",
+    detail: `Your JPG/PNG/WebP/AVIF files are yours. We don't stamp them. We don't degrade their quality to push you toward a paid version.`,
+  },
+  {
+    promise: "Open source forever",
+    detail: `If we ever shut down, the code stays. Fork it, host it yourself, or run it from a local file. Your converter outlives us.`,
+  },
+];
+---
+
+<Layout
+  title={`Free forever — ${site.name}'s commitment`}
+  description={`${site.name} is free forever — no premium tier, no signup, no caps, no ads, no watermark, no tracking. Here's why we can promise that and how it stays sustainable.`}
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <article class="max-w-3xl mx-auto px-4 py-12">
+    <p class="text-sm text-[var(--color-muted)] mb-4">
+      <a href={b("/")} class="hover:text-[var(--color-fg)]">Home</a>
+      <span class="mx-2">/</span>
+      <span>Free Forever</span>
+    </p>
+
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+      Free <span class="text-[var(--color-accent)]">forever</span>.
+    </h1>
+    <p class="text-lg text-[var(--color-muted)] mb-12">
+      Not "free for now, paid later." Not "free for 100 conversions a month."
+      Not "free for personal use." Just free. For everyone. For every file.
+      For as long as the web exists.
+    </p>
+
+    <section class="space-y-6 mb-12">
+      {
+        pledge.map((p) => (
+          <div class="border-l-2 border-[var(--color-accent)] pl-5">
+            <h3 class="text-lg font-bold text-[var(--color-fg)] mb-1">
+              ✓ {p.promise}
+            </h3>
+            <p class="text-[var(--color-muted)]">{p.detail}</p>
+          </div>
+        ))
+      }
+    </section>
+
+    <hr class="border-[var(--color-border)] my-12" />
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      How is this sustainable?
+    </h2>
+    <p class="text-[var(--color-fg)] mb-3">
+      The honest answer:{" "}
+      <strong>{site.name} costs us almost nothing to run.</strong>
+    </p>
+    <ul class="space-y-2 text-[var(--color-fg)] list-disc pl-6">
+      <li>
+        <strong>No server bills.</strong> Conversion happens in your browser via
+        WebAssembly. We don't process your files — we don't even see them. Our
+        "infrastructure" is Cloudflare Pages serving static HTML and a 1.4MB
+        WASM bundle. Cloudflare's free tier covers it.
+      </li>
+      <li>
+        <strong>No storage bills.</strong> Your photos never touch our servers.
+        We have no database. We have no S3 bucket. There's nothing to back up.
+      </li>
+      <li>
+        <strong>No bandwidth bills (basically).</strong> Once your browser
+        caches the WASM, subsequent visits don't even download it. Cloudflare's
+        edge network absorbs the rest.
+      </li>
+      <li>
+        <strong>No support team.</strong> Without accounts, we have no password
+        resets, no billing disputes, no GDPR data-export requests. The
+        complexity isn't there to manage.
+      </li>
+    </ul>
+    <p class="text-[var(--color-fg)] mt-4">
+      {site.name} is a side project of{" "}
+      <a
+        href="https://worksoffline.in"
+        class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+      >
+        WorksOffline
+      </a>
+      , a tiny portfolio of client-side tools. It exists because the alternatives
+      annoyed me. It costs me maybe ₹500/year to keep online. Nobody is getting
+      rich here; nobody is getting fleeced either.
+    </p>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      Why this is the moat
+    </h2>
+    <p class="text-[var(--color-fg)]">
+      Every other "free" HEIC converter is a funnel:
+    </p>
+    <ul class="space-y-1 text-[var(--color-muted)] list-disc pl-6 mt-2 mb-4">
+      <li>iLoveIMG — 5 files per batch, then "go Premium" upsell</li>
+      <li>CloudConvert — 25 conversions a day, then "create an account"</li>
+      <li>Online-Convert — heavy ads, slow uploads, dark patterns everywhere</li>
+      <li>Most "free converters" — upload your photos to who-knows-where</li>
+    </ul>
+    <p class="text-[var(--color-fg)]">
+      They have to do that because they pay for bandwidth, CPU time, and ad
+      revenue. They have to monetize you because their business model requires
+      it. We don't — so we won't. <strong>That's the moat.</strong> Any
+      VC-backed converter that has to grow to justify a valuation will
+      eventually charge you. We don't have to grow.
+    </p>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      What if you change your mind?
+    </h2>
+    <p class="text-[var(--color-fg)]">
+      We won't — but if we did, the site is open source. The day a paywall
+      appears would be the day someone forks us and hosts a free clone. The
+      whole architecture is designed to be effortless to self-host. Your worst
+      case is an inconvenience, not a hostage situation.
+    </p>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      Can I support {site.name} anyway?
+    </h2>
+    <p class="text-[var(--color-fg)]">
+      Yes, in two ways that cost you nothing:
+    </p>
+    <ol class="space-y-2 text-[var(--color-fg)] list-decimal pl-6">
+      <li>
+        <strong>Tell one person.</strong> A friend who still emails herself
+        HEIC files. A coworker who has no idea iPhones don't shoot JPG by
+        default. Word of mouth is what keeps this tool relevant.
+      </li>
+      <li>
+        <strong>Check out the other tools.</strong> If you like the
+        no-bullshit-no-upload philosophy,{" "}
+        <a
+          href="https://worksoffline.in"
+          class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+        >
+          WorksOffline
+        </a>{" "}
+        has a few more in the same shape: PDF unlockers, document
+        redactors, photo cleanup, India-specific business utilities.
+      </li>
+    </ol>
+
+    <div class="mt-12 pt-8 border-t border-[var(--color-border)] text-center">
+      <a
+        href={b("/")}
+        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-base font-semibold text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Open the converter →
+      </a>
+      <p class="text-sm text-[var(--color-muted)] mt-4">
+        Free. Forever. For real.
+      </p>
+    </div>
+  </article>
+</Layout>

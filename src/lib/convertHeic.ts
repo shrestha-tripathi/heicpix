@@ -7,9 +7,10 @@
  * - Wraps errors with file context (so UI can show which file failed)
  */
 
-import { poolConvert } from "./workerPool";
+import { poolConvert, poolProbe } from "./workerPool";
+import type { OutputFormat } from "./conversionWorker";
 
-export type OutputFormat = "jpg" | "png";
+export type { OutputFormat };
 
 export type ConversionStatus =
   | { kind: "queued" }
@@ -25,8 +26,16 @@ export interface QueueItem {
 
 export interface ConvertSettings {
   format: OutputFormat;
-  /** 0..1, default 0.92 — only used for JPG. */
-  jpgQuality?: number;
+  /**
+   * Lossy quality 0..1 — applies to jpg/webp/avif, ignored for png.
+   * Optional: each format has a sensible default in the worker.
+   */
+  quality?: number;
+}
+
+/** Re-export so consumers can build a UI without importing the worker module. */
+export async function probeFormatSupport(format: OutputFormat): Promise<boolean> {
+  return poolProbe(format);
 }
 
 /** Per-item progress callback — fires on every status change. */
@@ -69,7 +78,9 @@ async function isLikelyHeic(file: File): Promise<boolean> {
 function makeOutputName(input: string, format: OutputFormat): string {
   const dot = input.lastIndexOf(".");
   const base = dot >= 0 ? input.slice(0, dot) : input;
-  return `${base}.${format}`;
+  // "jpg" filename suffix; all others use their format name as suffix
+  const ext = format === "jpg" ? "jpg" : format;
+  return `${base}.${ext}`;
 }
 
 /**
@@ -100,7 +111,7 @@ export async function convertOne(
     const buffer = await item.file.arrayBuffer();
     const result = await poolConvert(buffer, {
       format: settings.format,
-      quality: settings.jpgQuality,
+      quality: settings.quality,
     });
 
     const outName = makeOutputName(item.file.name, settings.format);

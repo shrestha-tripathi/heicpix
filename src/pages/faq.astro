@@ -99,6 +99,38 @@ const faqs = [
     a: `No. Everything happens on your device using WebAssembly. You can verify this by opening DevTools → Network tab while converting — you'll see zero outbound file uploads. There are no servers handling your photos because the conversion doesn't need any.`,
   },
   {
+    q: "Can I convert HEIC to WebP?",
+    a: `Yes — ${site.name} now supports four output formats: JPG, PNG, WebP, and AVIF. Pick WebP from the format toggle above the drop zone. WebP files are typically 25-35% smaller than JPG at the same visual quality, and they work in every modern browser (Chrome 32+, Firefox 65+, Safari 14+). It's the best format for posting photos on a blog or website.`,
+  },
+  {
+    q: "Can I convert HEIC to AVIF?",
+    a: `Yes, with one caveat: AVIF encoding in the browser requires Chrome 124+ or Edge 124+ (released April 2024). If you're on Firefox or Safari, the AVIF button is disabled and we suggest WebP instead. AVIF gives you files about half the size of JPG at the same visual quality — the best per-byte image format on the web today.`,
+  },
+  {
+    q: "What's the difference between JPG, PNG, WebP, and AVIF?",
+    a: `JPG is the universal default — works everywhere, smallest files for photos. PNG is lossless (perfect quality, but 3-5× larger than JPG). WebP is ~30% smaller than JPG with the same quality, works in all modern browsers. AVIF is ~50% smaller than JPG, but encoding is currently Chrome/Edge only. Read the full breakdown on our blog: "WebP vs JPG vs AVIF — which should you actually use?"`,
+  },
+  {
+    q: "How do I adjust the output quality?",
+    a: `For lossy formats (JPG, WebP, AVIF), a quality slider appears below the format toggle. Drag left for smaller files (more compression), right for higher quality. Sensible defaults: JPG 92%, WebP 85%, AVIF 65% — these match "visually indistinguishable from the original" for typical photos. PNG doesn't have a quality slider because it's lossless.`,
+  },
+  {
+    q: `Is ${site.name} really free, or is there a catch?`,
+    a: `Really free, no catch. No premium tier. No "free for 100 files a month." No "free for personal use, paid for commercial." No watermark on output. No ads. No signup. No data harvesting. We can promise this because ${site.name} costs almost nothing to run — conversion happens in your browser, so we don't pay for servers, storage, or bandwidth. Read our full free-forever pledge for the details.`,
+  },
+  {
+    q: `Will ${site.name} add a watermark to my converted photos?`,
+    a: `No. Never. Watermarks are how converters monetize captive users — we don't need to. Your JPG/PNG/WebP/AVIF files come out clean, pixel-perfect, and entirely yours. Output files have no metadata identifying ${site.name} either (we don't even put it in the EXIF comment field).`,
+  },
+  {
+    q: `Do I need to sign up to use ${site.name}?`,
+    a: `No. There's no signup, no account, no email-capture wall, no "create a free account to download." Open the page, drop your files, save the converted files. That's the whole flow. We don't have a login system to build because we have nothing to gate.`,
+  },
+  {
+    q: `Why is ${site.name} free forever?`,
+    a: `Because the architecture demands almost nothing to run. Conversion happens in your browser via WebAssembly — no server processes your files, so there's no per-conversion CPU bill. No file storage means no S3 bill. Cloudflare Pages serves the static site for free. Total cost: ~₹500/year for the domain. That's not a business that needs your money to survive.`,
+  },
+  {
     q: `What's the file size limit on ${site.name}?`,
     a: `There's no hard size limit per file. The practical limit is your device's memory: ~50 photos at a time on mobile, 500+ on desktop. Very large files (60+ megapixel iPhone Pro photos) take a few extra seconds each. If you hit memory limits, just convert in smaller batches.`,
   },

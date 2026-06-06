@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: `Convert HEIC to WebP for free with ${site.name}`,
+  description: `Convert iPhone HEIC photos to WebP (the modern web format) directly in your browser. Smaller files than JPG, same visual quality. Free forever, no upload, no signup.`,
+  totalTime: "PT15S",
+  step: [
+    {
+      "@type": "HowToStep",
+      name: "Open the converter",
+      text: `Open ${site.url} in any modern browser (Chrome, Edge, Safari, Firefox — all support WebP encoding).`,
+    },
+    {
+      "@type": "HowToStep",
+      name: "Choose WebP as the output format",
+      text: `Click the "WebP" button in the format picker. Adjust the quality slider — 85% is a good default that's visually identical to your HEIC at a smaller file size.`,
+    },
+    {
+      "@type": "HowToStep",
+      name: "Drop your HEIC files",
+      text: `Drag iPhone .heic files (or .heif) onto the dropzone. Or tap "Pick files" and select from your camera roll.`,
+    },
+    {
+      "@type": "HowToStep",
+      name: "Save the WebP files",
+      text: `Click "Save all" to download a zip, or use "Save to folder" (Chrome/Edge) to write each .webp directly into a folder of your choice. Filenames preserved.`,
+    },
+  ],
+};
+
+const breadcrumbLd = breadcrumb([
+  { name: "HEIC → WebP", path: "/heic-to-webp" },
+]);
+---
+
+<Layout
+  title={`Convert HEIC to WebP free — ${site.name}`}
+  description={`Free HEIC to WebP converter. Browser-only — your iPhone photos never upload. Smaller files than JPG, same quality. Unlimited batch, no signup, no ads, no watermark.`}
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <article class="max-w-3xl mx-auto px-4 py-12">
+    <p class="text-sm text-[var(--color-muted)] mb-4">
+      <a href={b("/")} class="hover:text-[var(--color-fg)]">Home</a>
+      <span class="mx-2">/</span>
+      <span>HEIC → WebP</span>
+    </p>
+
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+      HEIC to WebP, <span class="text-[var(--color-accent)]">free forever</span>.
+    </h1>
+    <p class="text-lg text-[var(--color-muted)] mb-8">
+      Modern format. Smaller files than JPG. Same visual quality. Right in your
+      browser — nothing uploads.
+    </p>
+
+    <div class="rounded-lg border border-[var(--color-accent)] bg-[var(--color-accent)]/[0.08] p-5 mb-10">
+      <p class="text-sm font-semibold text-[var(--color-fg)] mb-2">
+        → Just want to convert?
+      </p>
+      <p class="text-sm text-[var(--color-muted)] mb-3">
+        Skip the explainer. Open the converter, pick WebP, drop your files.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Open converter →
+      </a>
+    </div>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      Why convert HEIC to WebP?
+    </h2>
+    <ul class="space-y-2 text-[var(--color-fg)]">
+      <li>
+        <strong>Smaller than JPG</strong> — typically 25-35% smaller for the
+        same visual quality. Great for websites, blogs, or sharing.
+      </li>
+      <li>
+        <strong>Universally supported on the web</strong> — Chrome (since 2014),
+        Firefox (since 2019), Safari (since 2020), Edge, every modern browser.
+      </li>
+      <li>
+        <strong>Lossless mode available</strong> — drag the quality slider to
+        100% for lossless WebP (still smaller than PNG).
+      </li>
+      <li>
+        <strong>Already what your iPhone uses for HDR thumbnails</strong> — Apple
+        ships WebP in iOS Mail and Messages, so it's a "native-feeling" format.
+      </li>
+    </ul>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      How to convert HEIC to WebP
+    </h2>
+    <ol class="space-y-3 list-decimal pl-6 text-[var(--color-fg)]">
+      <li>
+        <strong>Open the converter</strong> — works in any browser, any device.
+      </li>
+      <li>
+        <strong>Pick WebP</strong> in the format toggle.
+      </li>
+      <li>
+        <strong>Adjust quality</strong> — 85% is the sweet spot for most photos.
+        Drop to 70% for tiny files, or push to 100% for lossless.
+      </li>
+      <li>
+        <strong>Drop your HEIC files</strong> — up to 5000 in one batch.
+      </li>
+      <li>
+        <strong>Save</strong> — zip download, save to folder (Chrome/Edge), or
+        share to another app (mobile).
+      </li>
+    </ol>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      WebP vs JPG vs AVIF — which should you pick?
+    </h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-[var(--color-border)]">
+            <th class="text-left py-2 pr-4 font-semibold">Format</th>
+            <th class="text-left py-2 pr-4 font-semibold">File size</th>
+            <th class="text-left py-2 pr-4 font-semibold">Browser support</th>
+            <th class="text-left py-2 font-semibold">Best for</th>
+          </tr>
+        </thead>
+        <tbody class="text-[var(--color-muted)]">
+          <tr class="border-b border-[var(--color-border)]/50">
+            <td class="py-3 pr-4 font-semibold text-[var(--color-fg)]">JPG</td>
+            <td class="py-3 pr-4">Baseline (~1×)</td>
+            <td class="py-3 pr-4">Everywhere, since 1992</td>
+            <td class="py-3">Email, printing, max compatibility</td>
+          </tr>
+          <tr class="border-b border-[var(--color-border)]/50">
+            <td class="py-3 pr-4 font-semibold text-[var(--color-fg)]">WebP</td>
+            <td class="py-3 pr-4">~25-35% smaller</td>
+            <td class="py-3 pr-4">All modern browsers (2020+)</td>
+            <td class="py-3">Websites, blogs, social posts</td>
+          </tr>
+          <tr>
+            <td class="py-3 pr-4 font-semibold text-[var(--color-fg)]">AVIF</td>
+            <td class="py-3 pr-4">~50% smaller than JPG</td>
+            <td class="py-3 pr-4">Chrome/Edge 124+ only (for encoding)</td>
+            <td class="py-3">Best quality-per-byte; pick when you can</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-[var(--color-muted)] mt-4">
+      <strong>TL;DR:</strong> Pick WebP. It's the safest "smaller than JPG"
+      option that works everywhere your photos might end up.
+    </p>
+
+    <h2 class="text-2xl font-bold tracking-tight mb-3 mt-10">
+      Is it really free?
+    </h2>
+    <p class="text-[var(--color-fg)]">
+      Yes. Forever. No signup, no daily caps, no ads, no watermark. Convert one
+      file or ten thousand — the price is always zero.{" "}
+      <a
+        href={b("/free-forever")}
+        class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+      >
+        Read why we're committed to that →
+      </a>
+    </p>
+
+    <div class="mt-12 pt-8 border-t border-[var(--color-border)]">
+      <a
+        href={b("/")}
+        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-base font-semibold text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Open converter →
+      </a>
+    </div>
+  </article>
+</Layout>

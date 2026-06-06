@@ -19,11 +19,13 @@ const jsonLd = {
     priceCurrency: "USD",
   },
   featureList: [
-    "Convert HEIC to JPG or PNG instantly",
-    "Unlimited batch size",
+    "Convert HEIC to JPG, PNG, WebP, or AVIF instantly",
+    "Adjustable quality slider for lossy formats",
+    "Unlimited batch size — no daily caps",
     "Zero file upload — runs entirely in your browser",
-    "No signup, no ads, no watermark",
-    "Works on iPhone, Android, Mac, Windows, Linux",
+    "No signup, no ads, no watermark, no premium tier",
+    "Free forever — not 'free for now, paid later'",
+    "Works on iPhone, Android, Mac, Windows, Linux, Chromebook",
   ],
 };
 ---
@@ -32,15 +34,23 @@ const jsonLd = {
   <div class="px-6 py-12 sm:py-16">
     <!-- Hero -->
     <section class="max-w-3xl mx-auto text-center mb-12">
+      <a
+        href={b("/free-forever")}
+        class="inline-flex items-center gap-2 rounded-full border border-[var(--color-accent)] bg-[var(--color-accent)]/[0.08] px-3 py-1 text-xs font-semibold text-[var(--color-accent)] hover:bg-[var(--color-accent)]/[0.14] transition-colors mb-6"
+      >
+        <span class="size-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true"></span>
+        Free forever · no signup · nothing uploads
+      </a>
+
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-5">
         Drop iPhone photos.<br />
-        <span class="text-[var(--color-accent)]">Get JPGs or PNGs.</span><br />
+        <span class="text-[var(--color-accent)]">Get JPG, PNG, WebP, AVIF.</span><br />
         <span class="text-[var(--color-accent)]">Instantly.</span>
       </h1>
 
       <p class="text-lg text-[var(--color-muted)] mb-7 max-w-2xl mx-auto">
-        Convert HEIC to JPG or PNG right in your browser. Unlimited batch,
-        zero upload, no signup. Your photos never leave your device.
+        Convert HEIC to four formats right in your browser. Adjustable quality.
+        Unlimited batch. Zero upload. Your photos never leave your device.
       </p>
 
       <!-- Format toggle: full user control -->
@@ -60,6 +70,10 @@ const jsonLd = {
       <li class="flex items-center gap-2">
         <span class="text-[var(--color-success)]" aria-hidden="true">✓</span>
         Unlimited files
+      </li>
+      <li class="flex items-center gap-2">
+        <span class="text-[var(--color-success)]" aria-hidden="true">✓</span>
+        4 formats: JPG · PNG · WebP · AVIF
       </li>
       <li class="flex items-center gap-2">
         <span class="text-[var(--color-success)]" aria-hidden="true">✓</span>
@@ -122,8 +136,8 @@ const jsonLd = {
               <th class="text-left py-3 px-4 font-semibold">Tool</th>
               <th class="text-left py-3 px-4 font-semibold">Upload?</th>
               <th class="text-left py-3 px-4 font-semibold">Free tier limit</th>
+              <th class="text-left py-3 px-4 font-semibold">Price for "no limit"</th>
               <th class="text-left py-3 px-4 font-semibold">Ads?</th>
-              <th class="text-left py-3 px-4 font-semibold">Signup?</th>
             </tr>
           </thead>
           <tbody>
@@ -131,29 +145,29 @@ const jsonLd = {
               <td class="py-3 px-4 text-[var(--color-muted)]">iloveimg.com</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">5 files per batch</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">$4/mo Premium</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Yes</td>
-              <td class="py-3 px-4 text-[var(--color-muted)]">For premium</td>
             </tr>
             <tr class="border-b border-[var(--color-border)]">
               <td class="py-3 px-4 text-[var(--color-muted)]">cloudconvert.com</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">25 per day</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">$8+/mo</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">No</td>
-              <td class="py-3 px-4 text-[var(--color-muted)]">Above 25/day</td>
             </tr>
             <tr class="border-b border-[var(--color-border)]">
               <td class="py-3 px-4 text-[var(--color-muted)]">online-convert.com</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">100 MB / file</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">$7+/mo</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Yes (heavy)</td>
-              <td class="py-3 px-4 text-[var(--color-muted)]">For premium</td>
             </tr>
             <tr class="border-b border-[var(--color-border)]">
               <td class="py-3 px-4 text-[var(--color-muted)]">heictojpg.com</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Uploads to server</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">30 per batch</td>
+              <td class="py-3 px-4 text-[var(--color-muted)]">N/A (capped)</td>
               <td class="py-3 px-4 text-[var(--color-muted)]">Yes</td>
-              <td class="py-3 px-4 text-[var(--color-muted)]">No</td>
             </tr>
             <tr
               class="border-t-2 border-[var(--color-accent)]"
@@ -172,10 +186,19 @@ const jsonLd = {
                 Unlimited
               </td>
               <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
-                No
+                <span class="inline-flex items-center gap-1">
+                  $0 · forever
+                  <a
+                    href={b("/free-forever")}
+                    class="text-xs text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+                    title="Read our free-forever pledge"
+                  >
+                    (why?)
+                  </a>
+                </span>
               </td>
               <td class="py-3 px-4 font-semibold text-[var(--color-fg)]">
-                Never
+                No
               </td>
             </tr>
           </tbody>
@@ -224,12 +247,26 @@ const jsonLd = {
       </div>
 
       <p class="text-sm text-[var(--color-muted)]">
-        Need lossless instead?
+        Or try the new formats —
+        <a
+          href={b("/heic-to-webp")}
+          class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+        >
+          HEIC → WebP
+        </a>{" "}
+        ·{" "}
+        <a
+          href={b("/heic-to-avif")}
+          class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+        >
+          HEIC → AVIF
+        </a>{" "}
+        ·{" "}
         <a
           href={b("/heic-to-png")}
           class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
         >
-          Convert HEIC to PNG →
+          HEIC → PNG
         </a>
       </p>
     </section>

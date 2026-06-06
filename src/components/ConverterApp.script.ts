@@ -43,17 +43,25 @@ if (
 ) {
   // We're not on the converter page — bail silently.
   // (Astro will still bundle this file but the script body short-circuits.)
-} else {
-  init();
 }
 
 // ------------------------------------------------------------------ state
+//
+// IMPORTANT: state must be declared BEFORE init() is called. If init()
+// runs first, it registers event listeners that reference `items` in
+// their closures. If the user clicks a button (e.g. format toggle)
+// before line 52 executes, the listener fires and hits a TDZ error
+// because `const items` is hoisted-but-uninitialized.
 
 const items: QueueItem[] = [];
 let nextId = 1;
 let activeConversions = 0;
 
 // ------------------------------------------------------------------ init
+
+if (dropzone && fileInput && fileList && batchSummary && saveAllBar) {
+  init();
+}
 
 function init(): void {
   // File picker
@@ -111,6 +119,14 @@ function init(): void {
     }
   }) as EventListener);
 
+  // Quality slider changes just need to re-render existing rows so
+  // the user sees the new label, but DON'T re-encode (the user may
+  // adjust then convert; if they change quality mid-batch, the next
+  // file picks up the new quality).
+  document.addEventListener("heicpix:quality-change", (() => {
+    /* no-op for now — quality is read fresh on each enqueue */
+  }) as EventListener);
+
   // Initial PNG-hint visibility (in case page loads with PNG already chosen)
   const initialHint = document.getElementById("png-hint");
   if (initialHint && currentFormat() === "png") {
@@ -118,9 +134,15 @@ function init(): void {
   }
 }
 
+const VALID_FORMATS = new Set(["jpg", "png", "webp", "avif"]);
 function currentFormat(): OutputFormat {
   const f = document.documentElement.dataset.format;
-  return f === "png" ? "png" : "jpg";
+  return f && VALID_FORMATS.has(f) ? (f as OutputFormat) : "jpg";
+}
+
+function currentQuality(): number {
+  const q = parseFloat(document.documentElement.dataset.quality ?? "");
+  return q >= 0.3 && q <= 1 ? q : 0.92;
 }
 
 // ------------------------------------------------------------------ enqueue
@@ -175,7 +197,10 @@ async function enqueue(files: File[]): Promise<void> {
   compactDropzoneIfNeeded();
 
   // Kick off conversion
-  const settings = { format: currentFormat() };
+  const settings = {
+    format: currentFormat(),
+    quality: currentQuality(),
+  };
   const newItems = items.filter((i) => i.status.kind === "queued");
   if (newItems.length === 0) return;
 

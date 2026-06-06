@@ -1,11 +1,21 @@
 /**
- * Web Worker: HEIC decode → JPG / PNG encode.
+ * Web Worker: HEIC decode → JPG / PNG / WebP / AVIF encode.
  *
  * Runs in its own thread so the main UI stays responsive even on 50-file
  * batches. Exposed via comlink as the `ConvertWorker` object.
  *
  * libheif-js loads a ~1.5MB WASM blob on first use. We instantiate lazily
  * (first call to `convert`) so cold-start doesn't block worker boot.
+ *
+ * Encoder support matrix (via OffscreenCanvas.convertToBlob):
+ *   - image/jpeg : ALL browsers (universal)
+ *   - image/png  : ALL browsers (universal)
+ *   - image/webp : Chrome 32+, Firefox 65+, Safari 14+ (2020+) — effectively universal
+ *   - image/avif : Chrome 124+ ONLY (April 2024) — Firefox/Safari fall back to PNG silently
+ *
+ * The main thread MUST check capabilities first via probeFormat() before
+ * showing AVIF as an option, otherwise users get PNG bytes wrapped in an
+ * .avif filename which is worse than not offering it.
  */
 
 import * as Comlink from "comlink";
@@ -14,11 +24,40 @@ import * as Comlink from "comlink";
 // @ts-ignore — no type defs for libheif-js bundle
 import libheif from "libheif-js/wasm-bundle";
 
-export type OutputFormat = "jpg" | "png";
+export type OutputFormat = "jpg" | "png" | "webp" | "avif";
+
+/** Whether the format honors the quality knob. PNG is always lossless. */
+export function isLossy(format: OutputFormat): boolean {
+  return format !== "png";
+}
+
+/** MIME type for a given output format. */
+export function mimeFor(format: OutputFormat): string {
+  switch (format) {
+    case "jpg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "avif":
+      return "image/avif";
+  }
+}
+
+/** Filename extension for a given output format. */
+export function extFor(format: OutputFormat): string {
+  return format === "jpg" ? "jpg" : format;
+}
 
 export interface ConvertOptions {
   format: OutputFormat;
-  /** JPG quality 0..1 (ignored for PNG). Default 0.92 matches iOS export. */
+  /**
+   * Lossy-format quality 0..1 (ignored for PNG).
+   * Defaults: jpg=0.92 (matches iOS export), webp=0.85, avif=0.65.
+   * AVIF needs much lower quality numbers to match equivalent visual
+   * quality — it's a more efficient codec.
+   */
   quality?: number;
 }
 
@@ -29,6 +68,14 @@ export interface ConvertResult {
   /** decoded image size in bytes (the canvas buffer, not the encoded blob). */
   rawBytes: number;
 }
+
+/** Default quality per lossy format. PNG ignored. */
+const DEFAULT_QUALITY: Record<OutputFormat, number> = {
+  jpg: 0.92,
+  png: 1, // ignored
+  webp: 0.85,
+  avif: 0.65,
+};
 
 // Singleton libheif decoder — instantiated on first convert() call.
 let decoder: { decode(buf: ArrayBuffer): unknown[] } | null = null;
@@ -54,6 +101,7 @@ async function getDecoder() {
  *   - Non-HEIC file (libheif rejects)
  *   - Corrupted HEIC
  *   - OOM (Canvas refuses to allocate)
+ *   - Browser doesn't support the requested encoder (returns wrong MIME)
  */
 async function convert(
   buffer: ArrayBuffer,
@@ -100,16 +148,51 @@ async function convert(
   });
 
   // Encode to requested format
-  const mimeType = options.format === "jpg" ? "image/jpeg" : "image/png";
-  const quality = options.format === "jpg" ? (options.quality ?? 0.92) : undefined;
+  const mimeType = mimeFor(options.format);
+  const quality = isLossy(options.format)
+    ? (options.quality ?? DEFAULT_QUALITY[options.format])
+    : undefined;
 
   const blob = await canvas.convertToBlob({ type: mimeType, quality });
+
+  // Verify the browser actually honored the encoder request. Chrome 124+
+  // is the only browser that encodes AVIF; older Chrome / Firefox / Safari
+  // silently fall back to image/png. If we asked for AVIF and got PNG, the
+  // user saved a PNG renamed .avif which is worse than refusing.
+  if (mimeType !== "image/png" && blob.type === "image/png") {
+    throw new Error(
+      `Your browser doesn't support encoding ${options.format.toUpperCase()}. ` +
+        `Try Chrome 124+ for AVIF, or switch to JPG/PNG/WebP.`,
+    );
+  }
 
   return { blob, width, height, rawBytes };
 }
 
+/**
+ * Probe whether the worker's browser can actually encode a given format.
+ *
+ * Encodes a 1x1 canvas and checks the returned MIME. Cheap (~few ms),
+ * runs once per format at app startup from the main thread via comlink.
+ */
+async function probeFormat(format: OutputFormat): Promise<boolean> {
+  if (format === "jpg" || format === "png") return true; // universal
+  try {
+    const canvas = new OffscreenCanvas(1, 1);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return false;
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, 1, 1);
+    const mime = mimeFor(format);
+    const blob = await canvas.convertToBlob({ type: mime, quality: 0.5 });
+    return blob.type === mime;
+  } catch {
+    return false;
+  }
+}
+
 /** Comlink-exposed API. Add new methods here as needed. */
-const api = { convert };
+const api = { convert, probeFormat };
 export type ConvertWorker = typeof api;
 
 Comlink.expose(api);

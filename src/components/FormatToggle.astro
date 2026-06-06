@@ -1,43 +1,103 @@
 ---
 /**
- * Two-button format toggle: JPG | PNG
+ * Format + quality controls for the converter.
  *
- * - Sets `data-format` on document.documentElement (read by the
- *   converter via getAttribute)
- * - Persists choice to localStorage
- * - Visually disables the button matching current selection
+ * Renders:
+ *   1. Four-format toggle: JPG / PNG / WebP / AVIF
+ *      - AVIF auto-disables if the browser doesn't encode AVIF
+ *        (Chrome 124+ only as of 2026)
+ *      - Active button persists to localStorage under `${storageNs}:format`
+ *   2. Quality slider for lossy formats (JPG/WebP/AVIF)
+ *      - Hidden when PNG is active (lossless = no quality knob)
+ *      - Persists under `${storageNs}:quality`
+ *      - Range 0.30..1.00, step 0.05
+ *      - Default 0.92 (matches iOS native export)
  *
- * Why not a radio group? Pure-CSS pressed-state is simpler with two
- * mutually-exclusive buttons. Accessibility-wise we expose them as
- * `role="radio"` inside a `role="radiogroup"` for screen readers.
+ * Both controls dispatch `heicpix:format-change` and
+ * `heicpix:quality-change` CustomEvents so the converter can react
+ * (regenerate filenames, update size hints, etc).
+ *
+ * Why these together: they're conceptually one widget — "how do you
+ * want the output." Keeping them in one Astro component avoids
+ * orchestrating two scripts that both read/write document.documentElement.dataset.
  */
 import { site } from "../site.config";
 ---
 
-<div
-  id="format-toggle"
-  role="radiogroup"
-  aria-label="Output format"
-  class="inline-flex rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 text-sm font-semibold"
->
-  <button
-    type="button"
-    role="radio"
-    aria-checked="true"
-    data-format="jpg"
-    class="px-4 py-1.5 rounded-md transition-colors"
+<div class="space-y-3">
+  <!-- Format row -->
+  <div
+    id="format-toggle"
+    role="radiogroup"
+    aria-label="Output format"
+    class="inline-flex flex-wrap rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 text-sm font-semibold gap-0"
   >
-    → JPG
-  </button>
-  <button
-    type="button"
-    role="radio"
-    aria-checked="false"
-    data-format="png"
-    class="px-4 py-1.5 rounded-md transition-colors"
+    <button
+      type="button"
+      role="radio"
+      aria-checked="true"
+      data-format="jpg"
+      class="px-4 py-1.5 rounded-md transition-colors"
+    >
+      → JPG
+    </button>
+    <button
+      type="button"
+      role="radio"
+      aria-checked="false"
+      data-format="png"
+      class="px-4 py-1.5 rounded-md transition-colors"
+    >
+      → PNG
+    </button>
+    <button
+      type="button"
+      role="radio"
+      aria-checked="false"
+      data-format="webp"
+      class="px-4 py-1.5 rounded-md transition-colors"
+    >
+      → WebP
+    </button>
+    <button
+      type="button"
+      role="radio"
+      aria-checked="false"
+      data-format="avif"
+      data-needs-probe="true"
+      class="px-4 py-1.5 rounded-md transition-colors"
+      title="AVIF requires Chrome 124+ or Edge 124+"
+    >
+      → AVIF
+    </button>
+  </div>
+
+  <!-- Quality row (hidden when PNG is active) -->
+  <div
+    id="quality-control"
+    class="flex items-center gap-3 text-sm"
+    data-show="true"
   >
-    → PNG
-  </button>
+    <label for="quality-slider" class="text-[var(--color-muted)] font-medium">
+      Quality
+    </label>
+    <input
+      id="quality-slider"
+      type="range"
+      min="0.3"
+      max="1"
+      step="0.05"
+      value="0.92"
+      class="flex-1 max-w-[160px] accent-[var(--color-accent)] cursor-pointer"
+      aria-label="Output quality (lossy formats)"
+    />
+    <span
+      id="quality-value"
+      class="font-mono text-xs text-[var(--color-fg)] tabular-nums w-8 text-right"
+    >
+      92%
+    </span>
+  </div>
 </div>
 
 <style>
@@ -48,48 +108,151 @@ import { site } from "../site.config";
   #format-toggle button[aria-checked="false"] {
     color: var(--color-muted);
   }
-  #format-toggle button[aria-checked="false"]:hover {
+  #format-toggle button[aria-checked="false"]:hover:not([disabled]) {
     color: var(--color-fg);
     background-color: var(--color-bg);
   }
+  #format-toggle button[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+  #quality-control[data-show="false"] {
+    display: none;
+  }
 </style>
 
-<script is:inline define:vars={{ storageKey: `${site.storageNs}:format` }}>
+<script
+  is:inline
+  define:vars={{
+    formatKey: `${site.storageNs}:format`,
+    qualityKey: `${site.storageNs}:quality`,
+  }}
+>
   (function () {
     const group = document.getElementById("format-toggle");
-    if (!group) return;
+    const qualityWrap = document.getElementById("quality-control");
+    const slider = document.getElementById("quality-slider");
+    const valueEl = document.getElementById("quality-value");
+    if (!group || !qualityWrap || !slider || !valueEl) return;
 
     const buttons = group.querySelectorAll("button[data-format]");
+    const valid = new Set(["jpg", "png", "webp", "avif"]);
+    const lossy = new Set(["jpg", "webp", "avif"]);
 
-    function setFormat(format) {
+    function readQuality() {
+      try {
+        const stored = parseFloat(localStorage.getItem(qualityKey));
+        if (stored >= 0.3 && stored <= 1) return stored;
+      } catch (e) {}
+      return 0.92;
+    }
+
+    function writeQuality(q) {
+      try {
+        localStorage.setItem(qualityKey, String(q));
+      } catch (e) {}
+    }
+
+    function setQuality(q, options) {
+      const opts = options || {};
+      slider.value = String(q);
+      valueEl.textContent = Math.round(q * 100) + "%";
+      document.documentElement.dataset.quality = String(q);
+      writeQuality(q);
+      if (!opts.silent) {
+        document.dispatchEvent(
+          new CustomEvent("heicpix:quality-change", { detail: { quality: q } }),
+        );
+      }
+    }
+
+    function setFormat(format, options) {
+      const opts = options || {};
       buttons.forEach((btn) => {
         const matches = btn.dataset.format === format;
         btn.setAttribute("aria-checked", matches ? "true" : "false");
       });
       document.documentElement.dataset.format = format;
       try {
-        localStorage.setItem(storageKey, format);
-      } catch (e) {
-        // localStorage disabled — keep in-memory only
+        localStorage.setItem(formatKey, format);
+      } catch (e) {}
+
+      // Show/hide quality control based on format
+      qualityWrap.dataset.show = lossy.has(format) ? "true" : "false";
+
+      if (!opts.silent) {
+        document.dispatchEvent(
+          new CustomEvent("heicpix:format-change", { detail: { format } }),
+        );
       }
-      // Notify listeners (e.g. UI labels that show "Convert N HEICs to JPG")
-      document.dispatchEvent(
-        new CustomEvent("heicpix:format-change", { detail: { format } }),
-      );
     }
 
     // Hydrate from storage
     let initial = "jpg";
     try {
-      const stored = localStorage.getItem(storageKey);
-      if (stored === "jpg" || stored === "png") initial = stored;
-    } catch (e) {
-      // ignore
-    }
-    setFormat(initial);
+      const stored = localStorage.getItem(formatKey);
+      if (valid.has(stored)) initial = stored;
+    } catch (e) {}
+    setQuality(readQuality(), { silent: true });
+    setFormat(initial, { silent: true });
 
+    // Wire up clicks
     buttons.forEach((btn) => {
-      btn.addEventListener("click", () => setFormat(btn.dataset.format));
+      btn.addEventListener("click", () => {
+        if (btn.hasAttribute("disabled")) return;
+        setFormat(btn.dataset.format);
+      });
     });
+
+    // Wire up slider
+    slider.addEventListener("input", () => {
+      setQuality(parseFloat(slider.value));
+    });
+
+    // Probe AVIF support asynchronously — disable the button if unsupported.
+    // We do this here (not in the worker module) so the probe runs before
+    // libheif is even loaded. Use the main thread's OffscreenCanvas.
+    (async () => {
+      const avifBtn = group.querySelector('button[data-format="avif"]');
+      if (!avifBtn) return;
+      try {
+        // Some browsers don't have OffscreenCanvas in the main thread —
+        // use a plain HTMLCanvas as fallback.
+        let canvas;
+        if (typeof OffscreenCanvas !== "undefined") {
+          canvas = new OffscreenCanvas(1, 1);
+        } else {
+          canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 1;
+        }
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, 1, 1);
+
+        let blob;
+        if (canvas.convertToBlob) {
+          blob = await canvas.convertToBlob({ type: "image/avif", quality: 0.5 });
+        } else {
+          blob = await new Promise((resolve) =>
+            canvas.toBlob(resolve, "image/avif", 0.5),
+          );
+        }
+        const supported = blob && blob.type === "image/avif";
+        if (!supported) {
+          avifBtn.setAttribute("disabled", "");
+          avifBtn.setAttribute(
+            "title",
+            "AVIF encoding requires Chrome 124+ or Edge 124+. Try WebP — almost as small, universally supported.",
+          );
+          // If AVIF was the persisted choice, fall back to WebP
+          if (document.documentElement.dataset.format === "avif") {
+            setFormat("webp");
+          }
+        }
+      } catch (e) {
+        avifBtn.setAttribute("disabled", "");
+      }
+    })();
   })();
 </script>

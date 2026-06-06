@@ -12,7 +12,7 @@
  */
 
 import * as Comlink from "comlink";
-import type { ConvertWorker } from "./conversionWorker";
+import type { ConvertWorker, OutputFormat } from "./conversionWorker";
 import { optimalWorkerCount } from "./capabilities";
 
 interface PoolEntry {
@@ -53,7 +53,7 @@ function ensurePool(): PoolEntry[] {
  */
 export async function poolConvert(
   buffer: ArrayBuffer,
-  options: { format: "jpg" | "png"; quality?: number },
+  options: { format: OutputFormat; quality?: number },
 ): ReturnType<Comlink.Remote<ConvertWorker>["convert"]> {
   const workers = ensurePool();
 
@@ -78,6 +78,23 @@ export async function poolConvert(
   } finally {
     chosen.pending--;
   }
+}
+
+/**
+ * Cheap encoder-capability probe — asks worker[0] to encode a 1x1 of the
+ * given format and returns whether the browser honored the MIME request.
+ * Results cached for the page lifetime since browser support doesn't
+ * change between calls.
+ */
+const probeCache = new Map<OutputFormat, Promise<boolean>>();
+
+export function poolProbe(format: OutputFormat): Promise<boolean> {
+  const cached = probeCache.get(format);
+  if (cached) return cached;
+  const workers = ensurePool();
+  const promise = workers[0]!.proxy.probeFormat(format);
+  probeCache.set(format, promise);
+  return promise;
 }
 
 /** Cleanup — useful for tests; not called in production. */
