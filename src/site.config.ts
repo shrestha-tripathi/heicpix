@@ -23,10 +23,10 @@ export const site = {
   // Brand identity
   name: env.PUBLIC_SITE_NAME ?? "HEICPix",
   shortName: env.PUBLIC_SITE_SHORT_NAME ?? "HEICPix",
-  tagline: env.PUBLIC_SITE_TAGLINE ?? "iPhone HEIC photos to JPG, in your browser",
+  tagline: env.PUBLIC_SITE_TAGLINE ?? "iPhone HEIC photos to JPG or PNG, in your browser",
   description:
     env.PUBLIC_SITE_DESCRIPTION ??
-    "Convert HEIC to JPG for free. Unlimited batch, zero upload, no signup. Works in any browser.",
+    "Convert HEIC to JPG or PNG for free. Unlimited batch, zero upload, no signup. Works in any browser.",
 
   // URLs
   domain: siteDomain,
