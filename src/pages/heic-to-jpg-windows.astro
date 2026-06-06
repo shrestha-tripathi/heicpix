@@ -1,0 +1,127 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to open HEIC photos on Windows",
+  description: "Quick guide for Windows users who can't open .heic files from an iPhone.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name} in your browser`, text: `Visit ${site.domain} — works on Edge, Chrome, Firefox, any modern browser.` },
+    { "@type": "HowToStep", position: 2, name: "Drag the .heic file in", text: "Or click to pick it from your Downloads folder." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG or PNG", text: "JPG opens in Windows Photos by default. PNG works too if you want lossless quality." },
+    { "@type": "HowToStep", position: 4, name: "Download the converted file", text: "Now any Windows app can open it — Photos, Paint, PowerPoint, anywhere." },
+  ],
+};
+---
+
+<Layout
+  title="HEIC to JPG on Windows — open iPhone photos without installing anything"
+  description="Got HEIC photos from an iPhone on your Windows PC? Convert them to JPG instantly in your browser. No software install. Free. Unlimited."
+  jsonLd={jsonLd}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC on Windows</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Open HEIC photos on Windows
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Someone sent you HEIC photos from their iPhone. Windows doesn't
+        open them by default. Here's the fastest fix.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The short answer</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Use {site.name} to convert the .heic file to .jpg right in your browser
+        — then Windows Photos opens it normally.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC to JPG now →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why doesn't Windows open HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        HEIC is Apple's photo format. iPhones save photos as
+        <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">.heic</code>
+        by default since iOS 11 (2017). Windows 10 and 11 can read HEIC
+        files <em>if</em> you install Microsoft's HEIF Image Extensions
+        from the Microsoft Store. But the codec extension costs money
+        (the codec for video does — image is free but confusing to find),
+        and even after installing it, sharing the file with another Windows
+        app or uploading it to a website that doesn't support HEIC is still
+        a problem.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Converting to JPG once solves the problem forever. The file becomes
+        a universal format every app understands.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Alternative: Microsoft's codec</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        If you'd rather Windows just read HEIC natively:
+      </p>
+      <ol class="list-decimal pl-6 space-y-2 text-[var(--color-muted)]">
+        <li>Open Microsoft Store → search "HEIF Image Extensions" → install</li>
+        <li>
+          Open Microsoft Store → search "HEVC Video Extensions" (this is the
+          video codec — $0.99 — needed for HEIC variants that include depth
+          or motion data)
+        </li>
+        <li>Restart Photos app</li>
+      </ol>
+      <p class="text-[var(--color-muted)] leading-relaxed mt-4">
+        That makes Windows Photos open HEIC. But you still can't paste it
+        into apps that don't speak HEIC (most websites, Word, PowerPoint
+        before 365, etc.) — converting to JPG once is more universal.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why {site.name} vs other converters?</h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Nothing uploads.</strong> The conversion happens in your browser, so your photos don't get sent to a stranger's server.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Unlimited.</strong> Convert a folder of 200 photos at once. Most online tools cap you at 5 or 25 files.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">No install.</strong> Just open the page. No Microsoft Store extensions, no software downloads, no admin rights needed.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Free forever.</strong> No signup, no email capture, no ads.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert your HEIC to JPG now →
+      </a>
+    </div>
+  </div>
+</Layout>

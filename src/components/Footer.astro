@@ -1,0 +1,73 @@
+---
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--color-border)] mt-24">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm">
+      <div class="col-span-2 sm:col-span-1">
+        <a
+          href={b("/")}
+          class="font-extrabold tracking-tight text-lg text-[var(--color-fg)] no-underline"
+        >
+          {site.name}
+        </a>
+        <p class="mt-2 text-[var(--color-muted)]">
+          {site.tagline}
+        </p>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Tool</h3>
+        <ul class="space-y-2 text-[var(--color-muted)]">
+          <li><a href={b("/")} class="hover:text-[var(--color-fg)]">Convert HEIC</a></li>
+          <li><a href={b("/how-it-works")} class="hover:text-[var(--color-fg)]">How it works</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Guides</h3>
+        <ul class="space-y-2 text-[var(--color-muted)]">
+          <li><a href={b("/heic-to-jpg-windows")} class="hover:text-[var(--color-fg)]">HEIC on Windows</a></li>
+          <li><a href={b("/heic-to-jpg-mac")} class="hover:text-[var(--color-fg)]">HEIC on Mac</a></li>
+          <li><a href={b("/heic-to-png")} class="hover:text-[var(--color-fg)]">HEIC → PNG</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">About</h3>
+        <ul class="space-y-2 text-[var(--color-muted)]">
+          <li><a href={b("/faq")} class="hover:text-[var(--color-fg)]">FAQ</a></li>
+          <li><a href={b("/privacy")} class="hover:text-[var(--color-fg)]">Privacy</a></li>
+          <li>
+            <a
+              href={site.org.url}
+              rel="noopener"
+              class="hover:text-[var(--color-fg)]"
+            >
+              {site.org.name}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-10 pt-6 border-t border-[var(--color-border)] text-xs text-[var(--color-muted)] flex flex-col sm:flex-row gap-2 justify-between"
+    >
+      <p>
+        © {year} {site.name}. Built by
+        <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">
+          {site.org.name}
+        </a>
+        — privacy-first tools that work without the cloud.
+      </p>
+      <p>
+        Your photos never leave your device.
+      </p>
+    </div>
+  </div>
+</footer>

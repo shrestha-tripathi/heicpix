@@ -1,0 +1,95 @@
+---
+/**
+ * Two-button format toggle: JPG | PNG
+ *
+ * - Sets `data-format` on document.documentElement (read by the
+ *   converter via getAttribute)
+ * - Persists choice to localStorage
+ * - Visually disables the button matching current selection
+ *
+ * Why not a radio group? Pure-CSS pressed-state is simpler with two
+ * mutually-exclusive buttons. Accessibility-wise we expose them as
+ * `role="radio"` inside a `role="radiogroup"` for screen readers.
+ */
+import { site } from "../site.config";
+---
+
+<div
+  id="format-toggle"
+  role="radiogroup"
+  aria-label="Output format"
+  class="inline-flex rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 text-sm font-semibold"
+>
+  <button
+    type="button"
+    role="radio"
+    aria-checked="true"
+    data-format="jpg"
+    class="px-4 py-1.5 rounded-md transition-colors"
+  >
+    → JPG
+  </button>
+  <button
+    type="button"
+    role="radio"
+    aria-checked="false"
+    data-format="png"
+    class="px-4 py-1.5 rounded-md transition-colors"
+  >
+    → PNG
+  </button>
+</div>
+
+<style>
+  #format-toggle button[aria-checked="true"] {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+  #format-toggle button[aria-checked="false"] {
+    color: var(--color-muted);
+  }
+  #format-toggle button[aria-checked="false"]:hover {
+    color: var(--color-fg);
+    background-color: var(--color-bg);
+  }
+</style>
+
+<script is:inline define:vars={{ storageKey: `${site.storageNs}:format` }}>
+  (function () {
+    const group = document.getElementById("format-toggle");
+    if (!group) return;
+
+    const buttons = group.querySelectorAll("button[data-format]");
+
+    function setFormat(format) {
+      buttons.forEach((btn) => {
+        const matches = btn.dataset.format === format;
+        btn.setAttribute("aria-checked", matches ? "true" : "false");
+      });
+      document.documentElement.dataset.format = format;
+      try {
+        localStorage.setItem(storageKey, format);
+      } catch (e) {
+        // localStorage disabled — keep in-memory only
+      }
+      // Notify listeners (e.g. UI labels that show "Convert N HEICs to JPG")
+      document.dispatchEvent(
+        new CustomEvent("heicpix:format-change", { detail: { format } }),
+      );
+    }
+
+    // Hydrate from storage
+    let initial = "jpg";
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored === "jpg" || stored === "png") initial = stored;
+    } catch (e) {
+      // ignore
+    }
+    setFormat(initial);
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => setFormat(btn.dataset.format));
+    });
+  })();
+</script>

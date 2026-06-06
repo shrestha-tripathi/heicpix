@@ -1,0 +1,136 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+
+const steps = [
+  {
+    name: "Drop your HEIC photos",
+    text: "Drag .heic files from your iPhone (or Files app, Downloads folder, anywhere) into the drop zone. Or tap to open the file picker.",
+  },
+  {
+    name: "Pick JPG or PNG",
+    text: "Use the toggle above the drop zone to pick your output format. JPG is smaller and best for sharing. PNG is lossless and best for editing or transparency.",
+  },
+  {
+    name: "Watch them convert",
+    text: "Each file converts in your browser's background using WebAssembly. You'll see a progress bar per file. Most photos finish in under a second.",
+  },
+  {
+    name: "Save your converted files",
+    text: "When conversion finishes, you'll see a 'Save All' bar with three options: Download as .zip (works everywhere), Save to folder (Chrome/Edge — saves directly to a folder you pick), or Share (mobile-friendly — opens your phone's share sheet).",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to convert HEIC photos to JPG or PNG in your browser",
+  description: `Step-by-step guide to converting iPhone HEIC photos to JPG or PNG using ${site.name}, entirely in your browser.`,
+  totalTime: "PT1M",
+  step: steps.map((s, i) => ({
+    "@type": "HowToStep",
+    position: i + 1,
+    name: s.name,
+    text: s.text,
+  })),
+};
+---
+
+<Layout
+  title={`How ${site.name} works — convert HEIC to JPG or PNG in seconds`}
+  description={`Step-by-step guide to converting iPhone HEIC photos to JPG or PNG using ${site.name}. Drag, pick format, save. All in your browser. Nothing uploads.`}
+  jsonLd={jsonLd}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>How it works</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        How {site.name} works
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Drag, pick format, save. Four steps from iPhone HEIC to a JPG or
+        PNG anyone can open.
+      </p>
+    </header>
+
+    <ol class="space-y-8 list-none p-0">
+      {
+        steps.map((s, i) => (
+          <li class="flex gap-4">
+            <span class="shrink-0 w-10 h-10 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-bold flex items-center justify-center">
+              {i + 1}
+            </span>
+            <div>
+              <h2 class="text-xl font-bold mb-2 text-[var(--color-fg)]">{s.name}</h2>
+              <p class="text-[var(--color-muted)] leading-relaxed">{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-4">Why client-side conversion?</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-4">
+        <p>
+          Traditional "online converter" tools upload your photos to a server,
+          run the conversion there, then send the result back. This means:
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>Your photos sit on someone else's hard drive (forever, in many cases)</li>
+          <li>The transfer is slower than processing locally — you're bandwidth-bound</li>
+          <li>The service has to monetize the cost somehow — ads, limits, or paid tiers</li>
+          <li>If they leak data, you have no way to know</li>
+        </ul>
+        <p>
+          {site.name} runs the conversion inside your browser tab using WebAssembly
+          (specifically <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">libheif-js</code>,
+          a JavaScript port of the industry-standard libheif library). Your
+          photos are never sent anywhere. You can verify this in
+          <a
+            href="https://developer.chrome.com/docs/devtools/network/"
+            rel="noopener"
+            class="text-[var(--color-accent)] hover:underline"
+            >Chrome DevTools</a
+          > by opening the Network tab while converting — zero outbound file uploads.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Quality and format details</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          <strong class="text-[var(--color-fg)]">JPG output:</strong> Quality
+          0.92, the same default Apple uses when iPhone Photos exports to JPG.
+          Files are typically 60-80% the size of the original HEIC, since HEIC
+          is more efficient.
+        </p>
+        <p>
+          <strong class="text-[var(--color-fg)]">PNG output:</strong> Lossless
+          compression. Every pixel is preserved exactly. Files are typically
+          3-5× the size of the original HEIC. Use PNG only when you need exact
+          pixel data (editing, transparency, archival).
+        </p>
+        <p>
+          <strong class="text-[var(--color-fg)]">EXIF metadata:</strong>
+          Currently stripped during conversion. Preservation is on the roadmap.
+        </p>
+      </div>
+    </section>
+
+    <div class="mt-16 text-center">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Try it now →
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,114 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+
+const faqs = [
+  {
+    q: `Is ${site.name} really free? What's the catch?`,
+    a: "Yes, completely free. There is no catch. We don't even have an account system — there's nothing to sign up for. Conversion happens entirely in your browser, so we don't pay for servers to process your photos. Lifetime free, forever.",
+  },
+  {
+    q: "Do my photos get uploaded?",
+    a: "No. Everything happens on your device. The conversion uses WebAssembly running inside your browser tab — your photos never touch our servers, because there are no servers to touch them. You can verify this by opening DevTools → Network tab while you convert: you'll see zero outbound file uploads.",
+  },
+  {
+    q: "What's the maximum file size?",
+    a: "There's no hard size limit, but very large files (60+ megapixel iPhone Pro photos) may take a few seconds each. The practical limit is your device's memory — typically 50 photos at once on mobile, 500+ on a desktop. If you hit the limit, just convert in batches.",
+  },
+  {
+    q: "Can I convert HEIC to PNG, not just JPG?",
+    a: "Yes! There's a toggle above the dropzone — pick JPG or PNG. JPG is smaller (good for sharing and web). PNG is lossless (good for editing, transparency, or archival). You can switch any time.",
+  },
+  {
+    q: "Does it work on iPhone, iPad, or Android?",
+    a: `Yes. ${site.name} runs in any modern browser — Mobile Safari (iOS), Chrome (Android, Mac, Windows, Linux), Firefox, Edge. On iPhone you can pick photos directly from your camera roll.`,
+  },
+  {
+    q: "Why does my Android phone show a 'Cannot open HEIC' error?",
+    a: `HEIC is Apple's photo format and Android doesn't read it natively. That's the problem ${site.name} solves: someone sends you a HEIC, drop it into ${site.name}, get a JPG that opens anywhere.`,
+  },
+  {
+    q: "Can I keep the original EXIF data (date, location, camera info)?",
+    a: "In the free version, EXIF is stripped during conversion (this is the simpler implementation). EXIF preservation is on the roadmap and will be part of a paid one-time upgrade.",
+  },
+  {
+    q: "Why are my PNG files so much bigger?",
+    a: "PNG is lossless compression — it preserves every pixel exactly. A 700KB HEIC can become a 3-5MB PNG. For photos, JPG at 0.92 quality is usually indistinguishable to the eye and 3-5× smaller. Pick PNG only when you need exact pixel data (editing, screenshots, alpha channels).",
+  },
+  {
+    q: "Can I convert HEIC to PDF?",
+    a: "Not yet directly. You can convert HEIC → JPG here, then use any browser-based 'JPG to PDF' tool (like our sister project at worksoffline.in/pdfhub). HEIC → PDF as a single step is on the roadmap.",
+  },
+  {
+    q: "What is .HEIF vs .HEIC?",
+    a: `HEIF (High Efficiency Image Format) is the underlying container. HEIC is Apple's name for HEIF using the HEVC codec. Most iPhones save as .heic but the formats are functionally identical. ${site.name} handles both.`,
+  },
+  {
+    q: "Will Google Photos / iCloud / Dropbox convert these automatically?",
+    a: `Sometimes, sometimes not. Google Photos converts to JPG when you download via web (but not via Drive sync). iCloud preserves HEIC. Dropbox keeps the original. If you've ever shared a photo and the recipient couldn't open it, that's why ${site.name} exists.`,
+  },
+  {
+    q: "Is there an app I can install?",
+    a: `${site.name} works as a Progressive Web App. On iPhone: Safari → Share → 'Add to Home Screen'. On Android: Chrome will offer 'Install app' once you've visited the site. Once installed, you can share HEIC files directly from your photo library straight into ${site.name}.`,
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: f.a,
+    },
+  })),
+};
+---
+
+<Layout
+  title="FAQ — HEIC to JPG / PNG converter questions answered"
+  description="Common questions about converting HEIC photos to JPG or PNG: file limits, privacy, EXIF data, Android compatibility, and more."
+  jsonLd={jsonLd}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>FAQ</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Frequently asked questions
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Everything you might wonder about converting iPhone HEIC photos.
+      </p>
+    </header>
+
+    <div class="space-y-8">
+      {
+        faqs.map((f) => (
+          <article>
+            <h2 class="text-xl font-bold mb-2 text-[var(--color-fg)]">
+              {f.q}
+            </h2>
+            <p class="text-[var(--color-muted)] leading-relaxed">{f.a}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="mt-16 p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-center">
+      <p class="text-lg font-semibold mb-2">Got more questions?</p>
+      <p class="text-sm text-[var(--color-muted)]">
+        We're building this in the open at
+        <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">
+          {site.org.name}
+        </a>. Feedback welcome.
+      </p>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,155 @@
+---
+/**
+ * DropZone — the workhorse component.
+ *
+ * Renders:
+ *   - A drag/drop target with hidden <input type="file" multiple accept=".heic">
+ *   - A growing list of FileRow entries below
+ *   - A SaveAllBar that appears once at least one file is done
+ *
+ * State management is module-scoped vanilla JS (no framework) — the
+ * Astro hydration model would over-engineer this 200-line interaction.
+ *
+ * Wire up: this component renders the DOM. The actual JS lives in
+ * `src/components/ConverterApp.script.ts` and is imported below.
+ */
+---
+
+<section class="w-full max-w-3xl mx-auto" id="converter-app">
+  <!-- Drop area -->
+  <div
+    id="dropzone"
+    data-state="idle"
+    data-compact="false"
+    class="relative border-2 border-dashed border-[var(--color-border)] rounded-2xl p-10 sm:p-14 bg-[var(--color-surface)] text-center cursor-pointer transition-all"
+    tabindex="0"
+    role="button"
+    aria-label="Drop HEIC files here or click to pick photos"
+  >
+    <div id="dropzone-full" class="flex flex-col items-center gap-3 pointer-events-none">
+      <svg
+        viewBox="0 0 64 64"
+        class="w-14 h-14 text-[var(--color-accent)]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M32 8v34M20 30l12 12 12-12" />
+        <path d="M8 50v4a4 4 0 004 4h40a4 4 0 004-4v-4" />
+      </svg>
+      <p class="text-lg sm:text-xl font-semibold">
+        Drop iPhone HEIC photos here
+      </p>
+      <p class="text-sm text-[var(--color-muted)]">
+        or <span class="text-[var(--color-accent)] underline">tap to pick photos</span>
+      </p>
+    </div>
+
+    <div id="dropzone-compact" class="hidden items-center justify-center gap-2 pointer-events-none text-sm text-[var(--color-muted)]">
+      <svg viewBox="0 0 24 24" class="w-5 h-5 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+      </svg>
+      <span>Drop more photos or <span class="text-[var(--color-accent)] underline">tap to add</span></span>
+    </div>
+
+    <input
+      id="file-input"
+      type="file"
+      multiple
+      accept=".heic,.heif,image/heic,image/heif"
+      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+      aria-label="Pick HEIC files to convert"
+    />
+  </div>
+
+  <!-- Per-batch status -->
+  <div
+    id="batch-summary"
+    class="mt-6 hidden text-sm text-[var(--color-muted)] text-center"
+    aria-live="polite"
+  >
+    <span id="batch-progress-text"></span>
+  </div>
+
+  <!-- File rows container — items appended here dynamically -->
+  <ul id="file-list" class="mt-4 divide-y divide-[var(--color-border)]"></ul>
+
+  <!-- Save All Bar — revealed when ≥1 done -->
+  <div
+    id="save-all-bar"
+    class="hidden mt-4 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col sm:flex-row sm:items-center gap-3"
+  >
+    <span class="text-sm font-semibold flex-1" id="save-all-label"></span>
+    <div class="flex flex-wrap gap-2">
+      <button
+        id="btn-save-folder"
+        type="button"
+        class="hidden px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-bg)] text-sm font-semibold transition-colors"
+      >
+        Save to folder
+      </button>
+      <button
+        id="btn-share"
+        type="button"
+        class="hidden px-4 py-2 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-bg)] text-sm font-semibold transition-colors"
+      >
+        Share
+      </button>
+      <button
+        id="btn-download-zip"
+        type="button"
+        class="px-4 py-2 rounded-md bg-[var(--color-accent)] text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] text-sm font-semibold transition-colors"
+      >
+        Download .zip
+      </button>
+      <button
+        id="btn-clear"
+        type="button"
+        class="px-4 py-2 rounded-md text-[var(--color-muted)] hover:text-[var(--color-fg)] text-sm font-semibold transition-colors"
+        title="Clear list"
+        aria-label="Clear list"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Errors -->
+  <div
+    id="errors-block"
+    class="hidden mt-4 p-3 rounded-md border border-[var(--color-error)] bg-[var(--color-error)]/10 text-sm text-[var(--color-error)]"
+    role="alert"
+  >
+    <span id="errors-text"></span>
+  </div>
+</section>
+
+<style>
+  #dropzone[data-state="active"] {
+    border-color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  }
+  #dropzone[data-compact="true"] {
+    padding: 1rem 1.5rem;
+  }
+  #dropzone[data-compact="true"] #dropzone-full {
+    display: none;
+  }
+  #dropzone[data-compact="true"] #dropzone-compact {
+    display: flex;
+  }
+  #dropzone:focus-visible {
+    border-color: var(--color-accent);
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  // Use a dynamic import so this script's full bundle (with libheif WASM)
+  // only loads when the user reaches the converter — keeps initial page
+  // load light for SEO.
+  import("./ConverterApp.script.ts");
+</script>

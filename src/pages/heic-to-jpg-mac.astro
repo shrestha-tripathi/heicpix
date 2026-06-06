@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to convert HEIC to JPG on a Mac",
+  description: "Two-second tip for Mac users who need to send iPhone HEIC photos to non-Apple recipients.",
+  totalTime: "PT15S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name}`, text: `Visit ${site.domain} — Safari, Chrome, Firefox all work.` },
+    { "@type": "HowToStep", position: 2, name: "Drop the HEIC file", text: "Drag from Finder or Photos app. You can drop folders of 200+ at once." },
+    { "@type": "HowToStep", position: 3, name: "Save the JPG", text: "Click Download .zip for a batch, or save directly to a folder (Chrome/Edge)." },
+  ],
+};
+---
+
+<Layout
+  title="HEIC to JPG on Mac — convert iPhone photos for non-Apple recipients"
+  description="On a Mac and need to send iPhone photos to someone on Windows or Android? Convert HEIC to JPG instantly in your browser. No app to install."
+  jsonLd={jsonLd}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC on Mac</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        HEIC to JPG on a Mac
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Sending iPhone photos to someone on Windows or Android? They can't
+        open HEIC. Here's the 15-second fix.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fast path: drop into {site.name}</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Mac's Photos and Finder both show HEIC files normally, so you might
+        not realize there's a problem until you send one to a Windows or
+        Android user and they hit "can't open file." Drop the .heic into
+        {site.name}, get a JPG, send the JPG instead.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC to JPG now →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Alternative #1: Mac Preview "Export"</h2>
+      <ol class="list-decimal pl-6 space-y-2 text-[var(--color-muted)]">
+        <li>Open the HEIC in Preview (double-click in Finder)</li>
+        <li>File → Export</li>
+        <li>Change Format to JPEG → Save</li>
+      </ol>
+      <p class="text-[var(--color-muted)] mt-4">
+        Works fine for one or two photos. Painful for 50+ — Preview doesn't
+        batch-export multiple files at once, you'd have to do them one by
+        one or write an AppleScript.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Alternative #2: Mac Automator workflow</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        You can build an Automator "Quick Action" that converts HEICs in
+        bulk via the right-click menu in Finder. Setup is fiddly (search
+        "Automator HEIC to JPG" — there are tutorials), but once built it's
+        very fast. Best for power users who convert HEIC often.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Alternative #3: Stop your iPhone from saving HEIC</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-2">
+        On your iPhone: Settings → Camera → Formats → "Most Compatible"
+        (instead of "High Efficiency"). New photos will save as JPG. Old
+        photos stay as HEIC.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Downside: JPGs from iPhone are larger than HEICs and lose Apple's
+        depth/HDR features. Most people don't care about either.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why {site.name} for one-off conversions</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        If you only need to convert once in a while (say, you're sending
+        photos to a relative on Android), {site.name} is the lowest-friction
+        path:
+      </p>
+      <ul class="space-y-2 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>Faster than opening Photos → Export per file</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>Handles batches of 200+ photos in a few seconds</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>Photos never upload — Apple-grade privacy</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span>No app to install, no admin rights, no Apple ID needed</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert your HEIC to JPG now →
+      </a>
+    </div>
+  </div>
+</Layout>

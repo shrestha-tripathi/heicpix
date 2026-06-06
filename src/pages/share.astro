@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+---
+
+<Layout
+  title="Shared files — converting now"
+  description={`Your shared files are being converted in ${site.name}.`}
+  noindex={true}
+  bare={true}
+>
+  <div class="max-w-md mx-auto px-6 py-24 text-center">
+    <div class="flex justify-center mb-6">
+      <svg viewBox="0 0 64 64" class="w-12 h-12 text-[var(--color-accent)] animate-spin" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+        <circle cx="32" cy="32" r="26" stroke-opacity="0.2"/>
+        <path d="M32 6a26 26 0 0126 26" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="text-2xl font-extrabold tracking-tight mb-3">
+      Loading your shared files…
+    </h1>
+    <p class="text-[var(--color-muted)] mb-6">
+      If this page doesn't redirect in a moment, your browser may have
+      blocked the share-target handler. Tap below to go to the converter
+      manually.
+    </p>
+    <a
+      href="/"
+      class="inline-block px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)]"
+    >
+      Open {site.name}
+    </a>
+  </div>
+</Layout>
+
+<script is:inline>
+  // The service worker should have intercepted POST /share and redirected
+  // to /?shared=1. If we ended up here (no SW, or static GET), redirect
+  // manually so the user lands on the converter.
+  setTimeout(() => {
+    if (window.location.pathname === "/share") {
+      window.location.replace("/?shared=1");
+    }
+  }, 1500);
+</script>

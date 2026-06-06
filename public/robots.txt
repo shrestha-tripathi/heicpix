@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# /share is the POST endpoint for the Web Share Target service worker —
+# not a real GET page worth indexing.
+Disallow: /share
+
+Sitemap: https://heicpix.com/sitemap.xml

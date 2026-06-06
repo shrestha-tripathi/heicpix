@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import { site } from "../site.config";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
 
 export interface Props {
   title?: string;
@@ -9,6 +11,8 @@ export interface Props {
   ogImage?: string;
   jsonLd?: object | object[];
   noindex?: boolean;
+  /** When true, omit Nav + Footer chrome (used by 404 + /share). */
+  bare?: boolean;
 }
 
 const {
@@ -18,6 +22,7 @@ const {
   ogImage = "/og-image.png",
   jsonLd,
   noindex = false,
+  bare = false,
 } = Astro.props;
 
 const pageTitle = title === site.tagline
@@ -85,6 +90,7 @@ const allSchemas = jsonLd
 
     {/* Favicons */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
 
@@ -111,8 +117,6 @@ const allSchemas = jsonLd
       set:html={JSON.stringify(allSchemas)}
     />
 
-    {/* Preconnect for fonts/CDN (none yet, but slot reserved) */}
-
     {/* GA4 — production-only, env-gated */}
     {
       import.meta.env.PROD && site.ga4MeasurementId && (
@@ -133,8 +137,23 @@ const allSchemas = jsonLd
         </>
       )
     }
+
+    {/* Register service worker for Web Share Target (production only). */}
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .catch((err) => console.warn("SW registration failed:", err));
+        });
+      }
+    </script>
   </head>
   <body class="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-fg)]">
-    <slot />
+    {!bare && <Nav />}
+    <main class="flex-1">
+      <slot />
+    </main>
+    {!bare && <Footer />}
   </body>
 </html>

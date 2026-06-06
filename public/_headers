@@ -1,0 +1,24 @@
+# Cloudflare Pages _headers — applied to all routes.
+#
+# Goal: prevent the *.pages.dev preview domain from getting indexed
+# (otherwise it competes with the real domain for SEO + dilutes link equity).
+# The real domain doesn't match this pattern; it gets the default headers.
+
+# Block indexing of *.pages.dev previews
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+# Sensible defaults for everything
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Service worker — never cache (always check for updates)
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Manifest — cache lightly
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600
+  Content-Type: application/manifest+json

@@ -1,0 +1,163 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+---
+
+<Layout
+  title="Privacy — your photos never leave your device"
+  description={`${site.name} is fully client-side. Your photos never get uploaded. Conversion happens entirely in your browser via WebAssembly. Privacy explained in detail.`}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>Privacy</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Your photos never leave your device.
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        And we can prove it.
+      </p>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">The short version</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          When you drop a HEIC photo into {site.name}, it stays inside your
+          browser tab. The conversion uses
+          <a
+            href="https://github.com/strukturag/libheif"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">libheif</a
+          > compiled to WebAssembly — that's just a fast version of regular
+          browser code. Your photo is decoded and re-encoded entirely on
+          your device.
+        </p>
+        <p>
+          We have no servers that touch your photos. We can't see them. We
+          don't keep them. We don't even know that you converted them.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Verify it yourself</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          Don't take our word for it. Open Developer Tools in your browser
+          (right-click → Inspect → Network tab) and watch what happens when
+          you convert a photo. You'll see:
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>The page loads (HTML, CSS, the JavaScript that runs the converter)</li>
+          <li>The WebAssembly module loads once (about 1.5MB, cached after first visit)</li>
+          <li>
+            <strong class="text-[var(--color-fg)]">
+              Zero requests when you drop a photo
+            </strong>
+          </li>
+          <li>Zero requests when conversion happens</li>
+          <li>Zero requests when you save the converted file</li>
+        </ul>
+        <p>
+          You can disable your internet entirely after the page loads and
+          conversion will still work. That's the definition of client-side.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">What we DO collect</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          We use <a
+            href="https://policies.google.com/privacy"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">Google Analytics 4</a
+          > to count anonymous page visits. This tells us things like:
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>How many people visited {site.name} today</li>
+          <li>Roughly which country (city-level at most)</li>
+          <li>Which page they landed on (e.g. the FAQ)</li>
+          <li>What browser they used</li>
+        </ul>
+        <p>
+          We've configured Analytics to anonymize IP addresses. We never
+          set advertising cookies, never share data with third parties for
+          marketing, and never see anything about the files you convert.
+        </p>
+        <p>
+          If you don't want analytics, use an ad blocker like uBlock Origin
+          — it blocks Google Analytics by default. {site.name} works identically
+          with or without analytics enabled.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Local storage</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          {site.name} stores two small things in your browser's localStorage:
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>
+            Your theme choice (dark or light) — under the key
+            <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">
+              {site.storageNs}:theme
+            </code>
+          </li>
+          <li>
+            Your preferred output format (JPG or PNG) — under the key
+            <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">
+              {site.storageNs}:format
+            </code>
+          </li>
+        </ul>
+        <p>
+          That's it. No photos, no usage history, no account data. Clear
+          your browser data to wipe these any time.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Web Share Target (PWA)</h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          If you install {site.name} as a Progressive Web App (Add to Home
+          Screen), you can share HEIC files directly from your OS share
+          sheet straight into {site.name}. When this happens:
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>The OS hands the file to our service worker (running in your browser)</li>
+          <li>The file is stored briefly in IndexedDB (still in your browser)</li>
+          <li>The converter reads it, converts, and clears the IndexedDB entry</li>
+        </ul>
+        <p>
+          The file never leaves your device during this flow either.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Contact</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        {site.name} is built by
+        <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">
+          {site.org.name}
+        </a>. For privacy questions, security disclosures, or general feedback,
+        open an issue on our GitHub or get in touch via the parent site.
+      </p>
+    </section>
+
+    <div class="text-xs text-[var(--color-muted)] pt-6 border-t border-[var(--color-border)]">
+      <p>Last updated: 2026-06</p>
+    </div>
+  </div>
+</Layout>
