@@ -114,9 +114,12 @@ function init(): void {
     btnShare.classList.remove("hidden");
   }
 
-  // Watch format toggle for live-update of saveAllLabel + PNG hint
+  // Watch format toggle for live-update of PNG hint. We do NOT re-render
+  // the save-all-bar here — already-converted files keep their original
+  // output format, so the label they belong to does not change when the
+  // user picks a new format for the NEXT file. (renderSaveAllBar derives
+  // the label from each item's actual outName, not currentFormat.)
   document.addEventListener("heicpix:format-change", ((e: CustomEvent) => {
-    renderSaveAllBar();
     const hint = document.getElementById("png-hint");
     if (hint) {
       hint.classList.toggle("hidden", e.detail.format !== "png");
@@ -375,10 +378,34 @@ function renderSaveAllBar(): void {
     return;
   }
   saveAllBar.classList.remove("hidden");
-  const format = currentFormat().toUpperCase();
-  saveAllLabel.textContent = `${done.length} ${format} file${
-    done.length === 1 ? "" : "s"
-  } ready`;
+
+  // Bucket done items by actual output format (NOT the current toggle, which
+  // may have changed mid-batch). Derive format from the output filename's
+  // extension — it's set at conversion time and never lies.
+  const counts = new Map<string, number>();
+  for (const item of done) {
+    const ext = item.status.outName.split(".").pop()?.toLowerCase() ?? "file";
+    // Display label: jpg → JPG, png → PNG, webp → WebP, avif → AVIF
+    const label =
+      ext === "webp" ? "WebP" : ext === "avif" ? "AVIF" : ext.toUpperCase();
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }
+
+  const total = done.length;
+  const filesWord = total === 1 ? "file" : "files";
+
+  if (counts.size === 1) {
+    // All files share the same output format — concise label.
+    const [[label]] = counts;
+    saveAllLabel.textContent = `${total} ${label} ${filesWord} ready`;
+  } else {
+    // Mixed-format batch (user changed toggle mid-batch). Show the breakdown.
+    // Sort by count desc, then by label asc for stable display order.
+    const parts = [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([label, n]) => `${n} ${label}`);
+    saveAllLabel.textContent = `${total} ${filesWord} ready (${parts.join(" · ")})`;
+  }
 }
 
 // ------------------------------------------------------------------ actions
