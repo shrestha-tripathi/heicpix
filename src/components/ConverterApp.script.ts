@@ -58,10 +58,14 @@ let nextId = 1;
 let activeConversions = 0;
 
 // ------------------------------------------------------------------ init
-
-if (dropzone && fileInput && fileList && batchSummary && saveAllBar) {
-  init();
-}
+//
+// ⚠️ The actual init() invocation lives at the BOTTOM of this file.
+// DO NOT move it here — module-level const declarations below (e.g.
+// VALID_FORMATS at the bottom of the file) will be in TDZ when init()
+// runs synchronously during module evaluation. We learned this twice:
+//   v0.4 — `items` was below init() → "Cannot access items"
+//   v0.5.1 — `VALID_FORMATS` was below init() → "Cannot access Y"
+// See skill: module-init-order-tdz-bug. Always invoke init() last.
 
 function init(): void {
   // File picker
@@ -460,3 +464,17 @@ function formatBytes(b: number): string {
     console.warn("Failed to ingest shared files:", e);
   }
 })();
+
+// ─────────────────────────────────────────────────────────────────────
+// init() invocation — ALWAYS LAST in module evaluation order.
+//
+// This must run AFTER all const declarations (VALID_FORMATS, etc.) so
+// that closures registered by init() (event listeners, etc.) can read
+// those constants without hitting a Temporal Dead Zone error.
+//
+// See skill: module-init-order-tdz-bug. Do NOT move this up the file.
+// ─────────────────────────────────────────────────────────────────────
+
+if (dropzone && fileInput && fileList && batchSummary && saveAllBar) {
+  init();
+}
