@@ -44,7 +44,9 @@ export const site = {
   themeColorLight: "#ffffff",
 
   // Analytics — gated to production only via Layout.astro
-  ga4MeasurementId: env.PUBLIC_GA4_MEASUREMENT_ID ?? "",
+  // Empty string disables analytics entirely (useful for forks / self-hosts).
+  // Property: HEICPix (separate from FTN's G-S9DSNFWGGF).
+  ga4MeasurementId: env.PUBLIC_GA4_MEASUREMENT_ID ?? "G-TRQMBGFSXC",
 
   // Social / sharing
   twitter: env.PUBLIC_TWITTER_HANDLE ?? "@worksoffline",
