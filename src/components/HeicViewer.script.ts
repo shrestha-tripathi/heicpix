@@ -77,7 +77,13 @@ async function handleFile(file: File) {
   }
 }
 
-dropzone?.addEventListener("click", () => input?.click());
+// NOTE: do NOT add a `dropzone.click → input.click()` handler. The <input>
+// is positioned `absolute inset-0` and already receives clicks natively.
+// Adding an explicit forward causes a double-trigger: picker #1 fires from
+// the native input click, then bubbles to the dropzone and fires picker #2.
+// On desktop this looks like "had to pick twice"; on iOS Safari it silently
+// dismisses both (one user-gesture = one picker). Keyboard activation is
+// handled below since the <input> doesn't get keyboard focus.
 dropzone?.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") {
     e.preventDefault();
