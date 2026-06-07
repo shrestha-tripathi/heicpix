@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────
+   Wire Tailwind's `dark:` variant to our `data-theme` attribute
+   (NOT the default `.dark` class or `prefers-color-scheme`).
+   Without this, any `dark:*` utility in markup silently no-ops
+   when the user toggles the theme button — see Nav.astro icons.
+   Matches both the element itself and descendants, in case
+   data-theme ever moves off <html>.
+   ────────────────────────────────────────────────────────────── */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ──────────────────────────────────────────────────────────────
    Tailwind v4 design tokens — DO NOT use tailwind.config.js
    Tokens live here in @theme. See .skills/tailwind-4-docs/.
    ────────────────────────────────────────────────────────────── */
