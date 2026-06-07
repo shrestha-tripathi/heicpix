@@ -4,10 +4,10 @@ import { b } from "../lib/baseUrl";
 
 const navLinks = [
   { href: b("/"), label: "Convert" },
-  { href: b("/how-it-works"), label: "How it works" },
+  { href: b("/heic-viewer"), label: "Viewer" },
+  { href: b("/heic-exif"), label: "EXIF" },
   { href: b("/blog"), label: "Blog" },
   { href: b("/faq"), label: "FAQ" },
-  { href: b("/install"), label: "Install" },
 ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";

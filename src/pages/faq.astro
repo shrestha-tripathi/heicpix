@@ -134,6 +134,34 @@ const faqs = [
     q: `What's the file size limit on ${site.name}?`,
     a: `There's no hard size limit per file. The practical limit is your device's memory: ~50 photos at a time on mobile, 500+ on desktop. Very large files (60+ megapixel iPhone Pro photos) take a few extra seconds each. If you hit memory limits, just convert in smaller batches.`,
   },
+  {
+    q: `Can I view a HEIC without converting it?`,
+    a: `Yes — use our HEIC Viewer. Drop a .heic file and it renders the photo right in your browser, no download required. Useful when you just want to peek at what someone sent you. The viewer uses the same WebAssembly decoder as the converter, so your file never leaves your device.`,
+  },
+  {
+    q: `What metadata is stored inside an iPhone HEIC photo?`,
+    a: `iPhone HEICs typically store: camera model + iOS version, lens used (wide/ultra-wide/tele), focal length, ISO, aperture, shutter speed, flash mode, capture date and time, and — if Location Services is on — the GPS coordinates of where you took the photo. You can see all of it with our HEIC EXIF Reader, which parses the metadata in your browser without uploading anything.`,
+  },
+  {
+    q: `How do I remove GPS coordinates from iPhone photos?`,
+    a: `Use the Strip HEIC EXIF tool. Drop your HEIC, get a clean JPG with no GPS, no camera info, no date, no metadata of any kind. It's the safe-to-share version — useful before posting publicly on social media, sending to a journalist, or selling on Marketplace.`,
+  },
+  {
+    q: `Why does Slack reject my iPhone HEIC photos?`,
+    a: `Slack's media preview pipeline doesn't support HEIC. The file uploads but recipients can't preview it inline. Convert to JPG first with ${site.name} and the photo embeds normally in every Slack client. See our HEIC-for-Slack page for the full workflow.`,
+  },
+  {
+    q: `Why doesn't Discord show HEIC photo previews?`,
+    a: `Discord's media proxy generates previews server-side using an older libvips that lacks HEIF support. The file uploads but renders as a broken thumbnail. Convert to JPG (or WebP) first — both work fine in Discord previews and embeds.`,
+  },
+  {
+    q: `Why does WordPress block .heic uploads?`,
+    a: `WordPress maintains an allowlist of MIME types in wp_check_filetype_and_ext(). HEIC isn't on it because PHP's default GD image library can't process HEIC — uploading would succeed but thumbnail generation would fail. Converting to JPG (or WebP/AVIF in modern WordPress versions) fixes it without needing plugins or wp-config edits.`,
+  },
+  {
+    q: `Does Canva accept HEIC uploads?`,
+    a: `Canva's web editor doesn't accept HEIC outside of Safari (which has native HEIC support). On Chrome, Firefox, Edge — and Canva's desktop and mobile apps — HEIC uploads fail. Convert to JPG, PNG, or WebP first with ${site.name} and the file appears in your Canva media library normally.`,
+  },
 ];
 
 const jsonLd = {

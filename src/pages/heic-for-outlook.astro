@@ -1,0 +1,110 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to send HEIC photos via Outlook",
+  description: "Outlook can't display iPhone HEIC attachments inline. Convert to JPG first.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name}`, text: `Visit ${site.domain}.` },
+    { "@type": "HowToStep", position: 2, name: "Drop your HEIC files", text: "Drag-and-drop or pick from disk." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG", text: "JPG renders inline in every Outlook version, including Outlook Web." },
+    { "@type": "HowToStep", position: 4, name: "Attach to your email", text: "Drag-attach the JPG into Outlook. The recipient sees the photo inline." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC for Outlook", path: "/heic-for-outlook" });
+---
+
+<Layout
+  title="HEIC in Outlook — convert iPhone photos so they show in email"
+  description="Outlook can attach .heic files but recipients can't open them on Windows. Convert HEIC to JPG in your browser first. Works on Outlook 2016+, Outlook Web, and Outlook Mobile."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC for Outlook</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Sending HEIC photos in Outlook email
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Your iPhone photos attach fine to Outlook — but the recipient can't
+        open the .heic file on their Windows PC. Convert to JPG first and
+        the photo just works in the email body.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Drop your HEIC into {site.name}, pick JPG, then attach the converted
+        file in Outlook. Recipients on Windows, Mac, mobile — everyone sees
+        the photo.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Outlook →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why HEIC breaks Outlook attachments</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Outlook for Windows uses the system's image preview pipeline. Without
+        Microsoft's paid HEIF Image Extensions installed, Windows can't
+        decode .heic — so the attachment shows as a generic file icon and
+        won't preview inline.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Even worse: many corporate IT policies block Microsoft Store installs,
+        meaning your colleagues can't fix it on their end. Converting to JPG
+        once on your end fixes it for everyone.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Inline embed vs attachment</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        JPG also lets you embed the photo <em>inline</em> in the email body
+        (drag the file into the compose window mid-text). HEIC can't be
+        embedded inline anywhere — Outlook silently converts it to an
+        attachment.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Bonus: strip GPS from work photos</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Photos taken on iPhone often contain GPS coordinates of where you
+        took them — your home, your client's office, the cafe meeting. If you're
+        emailing them externally, consider stripping that metadata first.
+      </p>
+      <a
+        href={b("/strip-heic-exif")}
+        class="text-[var(--color-accent)] hover:underline"
+      >
+        Use the EXIF stripper →
+      </a>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Outlook →
+      </a>
+    </div>
+  </div>
+</Layout>

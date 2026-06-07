@@ -7,7 +7,7 @@ const year = new Date().getFullYear();
 
 <footer class="border-t border-[var(--color-border)] mt-24">
   <div class="max-w-6xl mx-auto px-6 py-12">
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-8 text-sm">
+    <div class="grid grid-cols-2 sm:grid-cols-6 gap-8 text-sm">
       <div class="col-span-2 sm:col-span-1">
         <a
           href={b("/")}
@@ -21,10 +21,12 @@ const year = new Date().getFullYear();
       </div>
 
       <div>
-        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Tool</h3>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Tools</h3>
         <ul class="space-y-2 text-[var(--color-muted)]">
           <li><a href={b("/")} class="hover:text-[var(--color-fg)]">Convert HEIC</a></li>
-          <li><a href={b("/how-it-works")} class="hover:text-[var(--color-fg)]">How it works</a></li>
+          <li><a href={b("/heic-viewer")} class="hover:text-[var(--color-fg)]">HEIC Viewer</a></li>
+          <li><a href={b("/heic-exif")} class="hover:text-[var(--color-fg)]">HEIC EXIF</a></li>
+          <li><a href={b("/strip-heic-exif")} class="hover:text-[var(--color-fg)]">Strip EXIF</a></li>
           <li><a href={b("/install")} class="hover:text-[var(--color-fg)]">Install as app</a></li>
         </ul>
       </div>
@@ -41,10 +43,23 @@ const year = new Date().getFullYear();
       <div>
         <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Platforms</h3>
         <ul class="space-y-2 text-[var(--color-muted)]">
-          <li><a href={b("/heic-to-jpg-windows")} class="hover:text-[var(--color-fg)]">HEIC on Windows</a></li>
-          <li><a href={b("/heic-to-jpg-mac")} class="hover:text-[var(--color-fg)]">HEIC on Mac</a></li>
-          <li><a href={b("/heic-to-jpg-chromebook")} class="hover:text-[var(--color-fg)]">HEIC on Chromebook</a></li>
-          <li><a href={b("/heic-to-jpg-android")} class="hover:text-[var(--color-fg)]">HEIC on Android</a></li>
+          <li><a href={b("/heic-to-jpg-windows")} class="hover:text-[var(--color-fg)]">Windows</a></li>
+          <li><a href={b("/heic-to-jpg-mac")} class="hover:text-[var(--color-fg)]">Mac</a></li>
+          <li><a href={b("/heic-to-jpg-chromebook")} class="hover:text-[var(--color-fg)]">Chromebook</a></li>
+          <li><a href={b("/heic-to-jpg-android")} class="hover:text-[var(--color-fg)]">Android</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">For apps</h3>
+        <ul class="space-y-2 text-[var(--color-muted)]">
+          <li><a href={b("/heic-for-whatsapp")} class="hover:text-[var(--color-fg)]">WhatsApp</a></li>
+          <li><a href={b("/heic-for-gmail")} class="hover:text-[var(--color-fg)]">Gmail</a></li>
+          <li><a href={b("/heic-for-slack")} class="hover:text-[var(--color-fg)]">Slack</a></li>
+          <li><a href={b("/heic-for-discord")} class="hover:text-[var(--color-fg)]">Discord</a></li>
+          <li><a href={b("/heic-for-outlook")} class="hover:text-[var(--color-fg)]">Outlook</a></li>
+          <li><a href={b("/heic-for-canva")} class="hover:text-[var(--color-fg)]">Canva</a></li>
+          <li><a href={b("/heic-for-wordpress")} class="hover:text-[var(--color-fg)]">WordPress</a></li>
         </ul>
       </div>
 
@@ -54,6 +69,7 @@ const year = new Date().getFullYear();
           <li><a href={b("/free-forever")} class="hover:text-[var(--color-fg)] font-semibold text-[var(--color-accent)]">Free forever</a></li>
           <li><a href={b("/blog")} class="hover:text-[var(--color-fg)]">Blog</a></li>
           <li><a href={b("/faq")} class="hover:text-[var(--color-fg)]">FAQ</a></li>
+          <li><a href={b("/how-it-works")} class="hover:text-[var(--color-fg)]">How it works</a></li>
           <li><a href={b("/privacy")} class="hover:text-[var(--color-fg)]">Privacy</a></li>
           <li>
             <a

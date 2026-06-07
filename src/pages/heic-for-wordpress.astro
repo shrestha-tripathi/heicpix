@@ -1,0 +1,115 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to upload iPhone HEIC photos to WordPress",
+  description: "WordPress media library rejects HEIC. Convert to JPG in your browser, then upload.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name}`, text: `Visit ${site.domain}.` },
+    { "@type": "HowToStep", position: 2, name: "Drop your HEIC photos", text: "Drag-and-drop or pick from disk." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG (best) or WebP (smaller)", text: "JPG works everywhere; WebP is smaller and supported by modern WordPress." },
+    { "@type": "HowToStep", position: 4, name: "Upload to WordPress Media", text: "Drag the converted file into the WordPress media library. It appears immediately." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC for WordPress", path: "/heic-for-wordpress" });
+---
+
+<Layout
+  title="HEIC for WordPress — upload iPhone photos to your WordPress site"
+  description="WordPress media library blocks .heic uploads by default. Convert HEIC to JPG or WebP in your browser, then upload. Free, no plugin needed, no security risk."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC for WordPress</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Upload iPhone HEIC to WordPress
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        WordPress's media library shows "Sorry, this file type is not permitted
+        for security reasons" when you drop a .heic. Convert to JPG (or WebP)
+        in your browser first, then upload normally.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Drop your HEIC into {site.name}, pick JPG (or WebP for smaller files),
+        then upload the converted file to WordPress. No plugin install, no
+        wp-config edits, no security risk.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for WordPress →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why does WordPress block HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        WordPress's <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">wp_check_filetype_and_ext()</code>
+        function maintains an allowlist of upload MIME types. HEIC isn't on it
+        — because PHP's GD library (the default image processor in WordPress
+        installs) can't read HEIC, so even if you let it upload, the
+        thumbnails would fail to generate.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Some plugins claim to add HEIC support — they typically call ImageMagick
+        or an external API. Both add server load, plugin maintenance, and
+        potential security holes for what's essentially a one-time conversion.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Converting locally first is faster, safer, and works on every
+        WordPress install (including managed hosts that lock down plugins).
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Pro tip: pick WebP for blog posts</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        WordPress 5.8+ accepts WebP uploads natively and serves them faster
+        than JPG. WebP files are 25-50% smaller, which improves Core Web Vitals
+        (LCP score) and your SEO rankings.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Pick "WebP" in {site.name} before downloading. Same visual quality,
+        smaller upload, faster page load.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Bonus: AVIF for cutting-edge sites</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        WordPress 6.5+ supports AVIF uploads. AVIF is ~50% smaller than JPG
+        at equivalent quality. If your readers run modern browsers
+        (Chrome 124+, Edge 124+, Firefox 113+), AVIF is the lightest option.
+      </p>
+      <a href={b("/heic-to-avif")} class="text-[var(--color-accent)] hover:underline">
+        Convert HEIC to AVIF →
+      </a>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for WordPress →
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,100 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+import HeicExifReader from "../components/HeicExifReader.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: `${site.name} HEIC EXIF Reader`,
+  url: `${site.url}/heic-exif`,
+  description: "Free online HEIC EXIF viewer. See the camera, lens, date, GPS coordinates and every metadata field stored inside an iPhone HEIC photo — without uploading the file anywhere.",
+  applicationCategory: "MultimediaApplication",
+  operatingSystem: "Any (browser-based)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Show camera make, model, lens, focal length",
+    "Show capture date, exposure settings, ISO, aperture",
+    "Reveal GPS coordinates with map link",
+    "No upload — parses metadata locally",
+    "No signup required",
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC EXIF Reader", path: "/heic-exif" });
+---
+
+<Layout
+  title="HEIC EXIF Viewer — see camera, lens, GPS, date inside iPhone HEIC photos"
+  description="See every piece of metadata hidden inside an iPhone HEIC: camera, lens, date taken, GPS location, exposure settings. Free, no upload, runs in your browser."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC EXIF reader</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        See what's hidden in your HEIC
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Every iPhone photo carries invisible metadata: which iPhone took it,
+        the lens, the exact GPS coordinates, the date, the exposure settings.
+        Drop a .heic below to see all of it. <strong class="text-[var(--color-fg)]">Nothing uploads</strong> — your photo stays on your device.
+      </p>
+    </header>
+
+    <HeicExifReader />
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-4">What you'll see</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl border border-[var(--color-border)]">
+          <h3 class="font-bold mb-2 text-sm">📷 Camera info</h3>
+          <p class="text-sm text-[var(--color-muted)]">iPhone model, lens used (wide / ultra-wide / tele), focal length, 35mm equivalent.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--color-border)]">
+          <h3 class="font-bold mb-2 text-sm">🌍 GPS coordinates</h3>
+          <p class="text-sm text-[var(--color-muted)]">If Location Services was on, the exact lat/lon — with a one-click link to see it on a map.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--color-border)]">
+          <h3 class="font-bold mb-2 text-sm">📅 When + how</h3>
+          <p class="text-sm text-[var(--color-muted)]">Date and time taken, shutter speed, aperture, ISO, white balance, flash mode.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--color-border)]">
+          <h3 class="font-bold mb-2 text-sm">📐 Image data</h3>
+          <p class="text-sm text-[var(--color-muted)]">Dimensions, orientation, color space, software version.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Why this matters for privacy</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Most people don't realize their iPhone photos carry GPS coordinates accurate to a few meters. If you post a kid's photo on Facebook, screenshot a delivery to a neighbour, or share a photo from inside your home — the embedded metadata can tell strangers exactly where you live.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Worth checking before posting publicly. And if you find something sensitive — use the
+        <a href={b("/strip-heic-exif")} class="text-[var(--color-accent)] hover:underline">strip-EXIF tool</a>
+        to make a clean copy in one click.
+      </p>
+      <a
+        href={b("/strip-heic-exif")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Strip metadata from my HEIC →
+      </a>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Does this work on non-iPhone HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Yes — any HEIF/HEIC file from any camera (Samsung Galaxy, Canon R-series, Sony) uses the same container format with EXIF metadata. The reader works on all of them. Some fields (like Apple's specialized capture metadata) only appear on iPhone files; standard EXIF fields appear everywhere.
+      </p>
+    </section>
+  </div>
+</Layout>

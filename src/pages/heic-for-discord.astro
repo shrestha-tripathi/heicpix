@@ -1,0 +1,101 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to send HEIC photos in Discord",
+  description: "Discord doesn't show HEIC previews. Convert to JPG in your browser first.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name}`, text: `Visit ${site.domain}.` },
+    { "@type": "HowToStep", position: 2, name: "Drop your HEIC photos", text: "Drag-and-drop or tap to pick." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG (or PNG)", text: "JPG works in every Discord client, even old mobile apps." },
+    { "@type": "HowToStep", position: 4, name: "Send in Discord", text: "Drag the JPG into a channel or DM. Embeds and previews work." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC for Discord", path: "/heic-for-discord" });
+---
+
+<Layout
+  title="HEIC for Discord — fix iPhone photos that won't preview"
+  description="Discord uploads HEIC but doesn't preview them. Convert HEIC to JPG in your browser, then send to Discord. Free, no upload, no signup."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC for Discord</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Sending HEIC photos in Discord
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Discord lets you upload .heic files — but they show up as broken
+        thumbnails for everyone in the channel. Convert to JPG first and
+        previews + embeds work everywhere.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Drop your HEIC into {site.name}, pick JPG, then drag the result into
+        Discord. Embed renders, mobile users see the photo, all good.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Discord →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why doesn't Discord preview HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Discord's media proxy generates previews using an old version of
+        libvips that doesn't include HEIF support. The file uploads fine
+        but the thumbnail and inline render fail.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Worse: even desktop users with HEIC codec installed can't preview
+        Discord HEIC attachments inline — Discord serves their own proxied
+        URL, not the raw file.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Tips for Discord uploads</h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Pick JPG quality 0.85 for memes</strong> — smaller files upload faster on Nitro-free accounts (25MB cap).</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">PNG for screenshots</strong> with text or pixel art — lossless preserves sharp edges.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">WebP for batches</strong> — smaller than JPG, supported by Discord previews.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Discord →
+      </a>
+    </div>
+  </div>
+</Layout>

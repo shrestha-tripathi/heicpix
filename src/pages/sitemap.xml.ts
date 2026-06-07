@@ -20,13 +20,27 @@ export const GET: APIRoute = async () => {
     { path: "/blog", priority: "0.7", changefreq: "weekly" },
     { path: "/free-forever", priority: "0.7", changefreq: "yearly" },
     { path: "/privacy", priority: "0.5", changefreq: "yearly" },
+    // Inspector tools (v0.5)
+    { path: "/heic-viewer", priority: "0.8", changefreq: "monthly" },
+    { path: "/heic-exif", priority: "0.8", changefreq: "monthly" },
+    { path: "/strip-heic-exif", priority: "0.8", changefreq: "monthly" },
+    // Platform pages
     { path: "/heic-to-jpg-windows", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-to-jpg-mac", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-to-jpg-chromebook", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-to-jpg-android", priority: "0.7", changefreq: "monthly" },
+    // Format pages
     { path: "/heic-to-png", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-to-webp", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-to-avif", priority: "0.7", changefreq: "monthly" },
+    // App-specific pages (v0.5)
+    { path: "/heic-for-whatsapp", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-gmail", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-slack", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-discord", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-outlook", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-canva", priority: "0.7", changefreq: "monthly" },
+    { path: "/heic-for-wordpress", priority: "0.7", changefreq: "monthly" },
   ];
 
   const posts = await getCollection("blog", ({ data }) => !data.draft);

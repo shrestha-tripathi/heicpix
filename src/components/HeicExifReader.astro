@@ -1,0 +1,114 @@
+---
+/**
+ * HEIC EXIF reader — drag-drop a HEIC, show camera/date/GPS/etc.
+ * Uses exifr to parse the HEIC container directly (no decode needed).
+ */
+---
+
+<section class="w-full max-w-3xl mx-auto" id="exif-app">
+  <div
+    id="exif-dropzone"
+    data-state="idle"
+    class="relative border-2 border-dashed border-[var(--color-border)] rounded-2xl p-10 sm:p-14 bg-[var(--color-surface)] text-center cursor-pointer transition-all"
+    tabindex="0"
+    role="button"
+    aria-label="Drop a HEIC file to inspect metadata"
+  >
+    <div class="flex flex-col items-center gap-3 pointer-events-none">
+      <svg viewBox="0 0 64 64" class="w-14 h-14 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M32 4l24 12v20c0 14-10 22-24 24-14-2-24-10-24-24V16L32 4z"/>
+        <path d="M32 20v14M32 42v.01"/>
+      </svg>
+      <p class="text-lg sm:text-xl font-semibold">Drop a HEIC photo to inspect metadata</p>
+      <p class="text-sm text-[var(--color-muted)]">
+        or <span class="text-[var(--color-accent)] underline">tap to pick a photo</span>
+      </p>
+    </div>
+    <input
+      id="exif-file-input"
+      type="file"
+      accept=".heic,.heif,image/heic,image/heif"
+      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+      aria-label="Pick a HEIC file to inspect"
+    />
+  </div>
+
+  <div id="exif-status" class="hidden mt-4 text-sm text-[var(--color-muted)] text-center" aria-live="polite"></div>
+
+  <div id="exif-error" class="hidden mt-4 p-3 rounded-md border border-[var(--color-error)] bg-[var(--color-error)]/10 text-sm text-[var(--color-error)]" role="alert"></div>
+
+  <div id="exif-result" class="hidden mt-6 space-y-4">
+    <div id="exif-summary" class="text-sm text-[var(--color-muted)]"></div>
+
+    <div id="exif-table-wrap" class="rounded-xl border border-[var(--color-border)] overflow-hidden">
+      <table class="w-full text-sm">
+        <tbody id="exif-tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="exif-gps-wrap" class="hidden p-4 rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent)]/[0.06]">
+      <p class="text-sm font-semibold text-[var(--color-accent)] mb-2">📍 GPS coordinates found</p>
+      <p class="text-sm text-[var(--color-muted)] mb-3">
+        This photo has location data. Sharing it reveals exactly where you were.
+      </p>
+      <a
+        id="exif-gps-link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-[var(--color-accent)] hover:underline"
+      >See on map →</a>
+    </div>
+
+    <div id="exif-noexif" class="hidden p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm text-[var(--color-muted)]">
+      No EXIF metadata found in this file. It's already clean.
+    </div>
+
+    <div class="flex flex-wrap gap-2 pt-2">
+      <button
+        id="exif-pick-another"
+        type="button"
+        class="px-3 py-1.5 rounded-md border border-[var(--color-border)] hover:bg-[var(--color-surface)] text-xs font-semibold transition-colors"
+      >
+        Inspect another
+      </button>
+      <a
+        id="exif-strip-link"
+        href="/strip-heic-exif"
+        class="px-3 py-1.5 rounded-md bg-[var(--color-accent)] text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] text-xs font-semibold transition-colors"
+      >
+        Strip this metadata →
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  #exif-dropzone[data-state="active"] {
+    border-color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  }
+  #exif-dropzone:focus-visible {
+    border-color: var(--color-accent);
+    outline-offset: 4px;
+  }
+  #exif-tbody tr:nth-child(odd) {
+    background: var(--color-surface);
+  }
+  #exif-tbody td {
+    padding: 0.65rem 1rem;
+  }
+  #exif-tbody td:first-child {
+    color: var(--color-muted);
+    width: 40%;
+    font-weight: 500;
+  }
+  #exif-tbody td.sensitive {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  import("./HeicExifReader.script.ts");
+</script>

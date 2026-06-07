@@ -1,0 +1,110 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to send HEIC photos in Slack",
+  description: "Slack rejects iPhone HEIC photos. Convert them to JPG in your browser first, then drag into Slack.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name}`, text: `Visit ${site.domain} in any browser.` },
+    { "@type": "HowToStep", position: 2, name: "Drop your HEIC files", text: "Drag-and-drop or click to pick. Batch is fine." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG", text: "JPG is universal; Slack accepts it everywhere." },
+    { "@type": "HowToStep", position: 4, name: "Drop into Slack", text: "Drag the converted file into the Slack message box. Done." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC for Slack", path: "/heic-for-slack" });
+---
+
+<Layout
+  title="HEIC for Slack — why iPhone photos don't upload, and the fix"
+  description="Slack rejects .heic files from iPhone. Convert HEIC to JPG in your browser, no upload to a third party, then drop into Slack. Free, unlimited, takes 30 seconds."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC for Slack</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Sending HEIC photos in Slack
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        You dropped an iPhone photo into a Slack channel and got "this file type isn't supported." Convert it to JPG first — takes 30 seconds in your browser.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The short fix</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Drop your HEIC file into {site.name}, pick JPG, then drag the
+        downloaded JPG into Slack. Done.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Slack now →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why does Slack reject HEIC?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Slack's file preview pipeline doesn't handle Apple's HEIC format. The
+        upload itself doesn't fail outright — but the preview won't render and
+        recipients on Android, Windows or older browsers can't open the
+        attachment.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Slack has been "considering HEIC support" since 2020. Until they ship
+        it, the workaround is converting to JPG first — which is universal.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why not upload to a converter site?</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Work photos often contain sensitive context — internal whiteboards,
+        client documents on screen, badge photos, NDA-covered things. Uploading
+        them to a random "online converter" sends them to someone else's
+        server, with no real guarantee about what happens next.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        {site.name} converts in your browser — the file never leaves your
+        device. Safer for work data.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Long-term fix: stop iPhone from saving HEIC</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        If you regularly share work photos via Slack, you can make your iPhone
+        save new photos as JPG by default:
+      </p>
+      <ol class="list-decimal pl-6 space-y-2 text-[var(--color-muted)]">
+        <li>Settings → Camera → Formats</li>
+        <li>Tap "Most Compatible"</li>
+      </ol>
+      <p class="text-[var(--color-muted)] leading-relaxed mt-4">
+        Doesn't fix HEICs you've already taken — those still need {site.name}.
+      </p>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for Slack now →
+      </a>
+    </div>
+  </div>
+</Layout>

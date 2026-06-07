@@ -1,0 +1,80 @@
+---
+/**
+ * Strip HEIC EXIF — drag-drop a HEIC, get a metadata-free JPG.
+ *
+ * Approach: decode HEIC via libheif → re-encode as JPG via canvas. Canvas
+ * encode produces NO metadata by design, so the output is naturally clean
+ * (no GPS, no camera, no date, no Apple proprietary fields).
+ */
+---
+
+<section class="w-full max-w-3xl mx-auto" id="strip-app">
+  <div
+    id="strip-dropzone"
+    data-state="idle"
+    class="relative border-2 border-dashed border-[var(--color-border)] rounded-2xl p-10 sm:p-14 bg-[var(--color-surface)] text-center cursor-pointer transition-all"
+    tabindex="0"
+    role="button"
+    aria-label="Drop HEIC files to strip metadata"
+  >
+    <div class="flex flex-col items-center gap-3 pointer-events-none">
+      <svg viewBox="0 0 64 64" class="w-14 h-14 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 12h32l-4 40H20L16 12z"/>
+        <path d="M24 4h16v8H24zM26 24v18M38 24v18"/>
+      </svg>
+      <p class="text-lg sm:text-xl font-semibold">Drop HEIC photos to strip metadata</p>
+      <p class="text-sm text-[var(--color-muted)]">
+        or <span class="text-[var(--color-accent)] underline">tap to pick photos</span>
+      </p>
+    </div>
+    <input
+      id="strip-file-input"
+      type="file"
+      multiple
+      accept=".heic,.heif,image/heic,image/heif"
+      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+      aria-label="Pick HEIC files to strip metadata from"
+    />
+  </div>
+
+  <div id="strip-status" class="hidden mt-4 text-sm text-[var(--color-muted)] text-center" aria-live="polite"></div>
+
+  <ul id="strip-list" class="mt-4 divide-y divide-[var(--color-border)]"></ul>
+
+  <div id="strip-summary-bar" class="hidden mt-4 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col sm:flex-row sm:items-center gap-3">
+    <span class="text-sm font-semibold flex-1" id="strip-summary-label"></span>
+    <div class="flex flex-wrap gap-2">
+      <button
+        id="btn-strip-zip"
+        type="button"
+        class="px-4 py-2 rounded-md bg-[var(--color-accent)] text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-hover)] text-sm font-semibold transition-colors"
+      >
+        Download all as .zip
+      </button>
+      <button
+        id="btn-strip-clear"
+        type="button"
+        class="px-4 py-2 rounded-md text-[var(--color-muted)] hover:text-[var(--color-fg)] text-sm font-semibold transition-colors"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <div id="strip-error" class="hidden mt-4 p-3 rounded-md border border-[var(--color-error)] bg-[var(--color-error)]/10 text-sm text-[var(--color-error)]" role="alert"></div>
+</section>
+
+<style>
+  #strip-dropzone[data-state="active"] {
+    border-color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  }
+  #strip-dropzone:focus-visible {
+    border-color: var(--color-accent);
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  import("./HeicExifStripper.script.ts");
+</script>

@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to send iPhone HEIC photos via WhatsApp",
+  description: "WhatsApp re-compresses HEIC to JPG anyway, but Android recipients still see broken thumbnails. Convert first.",
+  totalTime: "PT30S",
+  step: [
+    { "@type": "HowToStep", position: 1, name: `Open ${site.name} on phone or PC`, text: `Visit ${site.domain} — works in any mobile browser.` },
+    { "@type": "HowToStep", position: 2, name: "Drop your HEIC photos", text: "Pick from your phone gallery or drag from desktop." },
+    { "@type": "HowToStep", position: 3, name: "Pick JPG", text: "JPG is WhatsApp's native format — recipients see previews on every device." },
+    { "@type": "HowToStep", position: 4, name: "Share to WhatsApp", text: "Tap Share → WhatsApp, or save and attach in chat. Both work." },
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC for WhatsApp", path: "/heic-for-whatsapp" });
+---
+
+<Layout
+  title="HEIC for WhatsApp — send iPhone photos that Android friends can preview"
+  description="WhatsApp lets you send HEIC, but Android recipients often see broken thumbnails. Convert HEIC to JPG in your browser first — works on every WhatsApp client. Free, browser-only."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC for WhatsApp</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Sending HEIC photos in WhatsApp
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Your iPhone shoots HEIC. WhatsApp lets you send it. But Android
+        friends often see "couldn't load image" or just a broken icon.
+        Convert to JPG once and the photo previews for everyone.
+      </p>
+    </header>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Why this happens</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        WhatsApp's image pipeline differs by client:
+      </p>
+      <ul class="list-disc pl-6 space-y-1.5 text-[var(--color-muted)] mb-3">
+        <li><strong class="text-[var(--color-fg)]">Sending from iPhone:</strong> WhatsApp converts HEIC to JPG before upload (in theory).</li>
+        <li><strong class="text-[var(--color-fg)]">Sending as "Document":</strong> WhatsApp preserves HEIC. Android recipients can't open it.</li>
+        <li><strong class="text-[var(--color-fg)]">Older WhatsApp on Android (pre-2020):</strong> Often shows broken thumbnails even for "photo" attachments.</li>
+        <li><strong class="text-[var(--color-fg)]">Forwarded media:</strong> Re-uploads may preserve the HEIC, breaking previews downstream.</li>
+      </ul>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Converting to JPG before sending eliminates every one of these edge
+        cases — and the file is smaller too, saving cellular data.
+      </p>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">The fix</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-4">
+        Drop your HEIC into {site.name}, pick JPG, save the result, then
+        attach it in WhatsApp. Works the same on iPhone Safari and Android Chrome.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for WhatsApp →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Bonus: install as a share-target</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Install {site.name} as a Progressive Web App from your phone — then
+        "{site.shortName}" appears in your Share sheet. Long-press a HEIC
+        in any app, tap Share, pick {site.shortName}, and the file lands in
+        the converter automatically. Tap "Share" on the result and pick
+        WhatsApp.
+      </p>
+      <a href={b("/install")} class="text-[var(--color-accent)] hover:underline">
+        Install guide →
+      </a>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Long-term fix: turn off HEIC on iPhone</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Settings → Camera → Formats → "Most Compatible". New photos save as
+        JPG, eliminating this hassle forever. Existing photos still need
+        conversion — use {site.name}.
+      </p>
+    </section>
+
+    <div class="text-center mt-12">
+      <a
+        href={b("/")}
+        class="inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+      >
+        Convert HEIC for WhatsApp →
+      </a>
+    </div>
+  </div>
+</Layout>

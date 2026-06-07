@@ -1,0 +1,135 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+import HeicExifStripper from "../components/HeicExifStripper.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: `${site.name} HEIC EXIF Stripper`,
+  url: `${site.url}/strip-heic-exif`,
+  description: "Remove all metadata from iPhone HEIC photos before sharing. Strips GPS, camera info, date, and every other EXIF field. Outputs clean JPG. Runs in your browser, nothing uploads.",
+  applicationCategory: "MultimediaApplication",
+  operatingSystem: "Any (browser-based)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Removes GPS coordinates from photos",
+    "Removes camera make, model, lens info",
+    "Removes date and timestamp metadata",
+    "Removes Apple proprietary metadata fields",
+    "Outputs clean JPG with zero metadata",
+    "Batch processing for multiple photos",
+    "No upload — runs locally via WebAssembly",
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "Strip HEIC EXIF", path: "/strip-heic-exif" });
+---
+
+<Layout
+  title="Strip HEIC EXIF — remove GPS, camera, date metadata before sharing"
+  description="Remove GPS coordinates, camera info, date and all metadata from iPhone HEIC photos before posting. Get a clean JPG in one click. Free, no upload, browser-only."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>Strip HEIC EXIF</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Remove metadata from HEIC photos
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Drop iPhone HEIC photos in. Get clean JPGs out — with no GPS, no camera
+        info, no date, no proprietary Apple metadata. The kind of files safe to
+        post publicly or share with strangers.
+      </p>
+    </header>
+
+    <HeicExifStripper />
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-4">What gets removed</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> GPS latitude / longitude / altitude</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Camera make and model</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Lens model and focal length</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Date and time taken</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Exposure / ISO / aperture</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Software version (iOS build)</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> Apple Maker Note (face data, scene data)</li>
+        <li class="flex gap-2"><span class="text-[var(--color-success)]">✓</span> XMP / IPTC / ICC metadata</li>
+      </ul>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Why we output JPG instead of HEIC</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Browsers can <em>decode</em> HEIC (via WebAssembly) but can't
+        <em>encode</em> it — no major browser ships a HEIC encoder yet. So we
+        decode the original and re-encode as JPG using the browser's built-in
+        encoder. As a bonus, JPG opens everywhere — Slack, WhatsApp, Outlook,
+        Instagram, every website upload field.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        The re-encode happens at quality 0.92 (matching iOS's own export
+        quality), so visually you won't see a difference.
+      </p>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Common reasons to strip metadata</h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">🏠</span>
+          <span><strong class="text-[var(--color-fg)]">Posting your kid's photo publicly.</strong> Default iPhone GPS reveals your home address to anyone who reads the file.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">📰</span>
+          <span><strong class="text-[var(--color-fg)]">Sending photos to a journalist or anonymous tipline.</strong> Metadata can identify you within seconds.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">💼</span>
+          <span><strong class="text-[var(--color-fg)]">Selling on Marketplace / Facebook / OLX / Craigslist.</strong> Don't tell strangers exactly where the product (and you) is located.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">⚖️</span>
+          <span><strong class="text-[var(--color-fg)]">Sharing evidence or legal documents.</strong> Some jurisdictions require redacted metadata for court submissions.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Why {site.name} vs other strippers?</h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Nothing uploads.</strong> Every other "strip EXIF" tool uploads the photo (with all its metadata!) to their server before stripping. We do it on your device.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Unlimited batch.</strong> Drop 200 photos in. Other tools cap at 10/day or want $5/mo.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-success)] shrink-0" aria-hidden="true">✓</span>
+          <span><strong class="text-[var(--color-fg)]">Free forever.</strong> No signup, no email capture, no ads, no premium tier.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+      <a href={b("/heic-exif")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+        <h3 class="font-bold mb-1">Just want to SEE the metadata first? →</h3>
+        <p class="text-[var(--color-muted)]">Use the EXIF reader to check what's there before stripping.</p>
+      </a>
+      <a href={b("/")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+        <h3 class="font-bold mb-1">Need a different output format? →</h3>
+        <p class="text-[var(--color-muted)]">Use the main converter for PNG, WebP or AVIF output (also metadata-free).</p>
+      </a>
+    </div>
+  </div>
+</Layout>

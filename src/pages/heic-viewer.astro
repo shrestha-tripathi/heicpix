@@ -1,0 +1,103 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+import HeicViewer from "../components/HeicViewer.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: `${site.name} HEIC Viewer`,
+  url: `${site.url}/heic-viewer`,
+  description: "Free online HEIC viewer — preview iPhone HEIC photos in your browser without converting or downloading. Drag-and-drop, instant render, nothing uploads.",
+  applicationCategory: "MultimediaApplication",
+  operatingSystem: "Any (browser-based)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Preview HEIC photos in your browser",
+    "Drag-and-drop file picker",
+    "Shows dimensions and file size",
+    "No upload — runs locally via WebAssembly",
+    "No signup required",
+  ],
+};
+
+const breadcrumbLd = breadcrumb({ name: "HEIC Viewer", path: "/heic-viewer" });
+---
+
+<Layout
+  title="HEIC Viewer — open and preview iPhone HEIC photos in your browser"
+  description="Free online HEIC viewer. Drag in any iPhone .heic file and see the photo instantly — no install, no upload, no conversion required. Works on Windows, Mac, Chromebook, Android."
+  jsonLd={[jsonLd, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>HEIC Viewer</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Open and preview HEIC photos
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Just want to <em>see</em> what's in a .heic file from an iPhone? Drop it
+        in below. No conversion, no download — the photo renders right here
+        in your browser.
+      </p>
+    </header>
+
+    <HeicViewer />
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-4">When should I just view vs convert?</h2>
+      <ul class="space-y-3 text-[var(--color-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">👁️</span>
+          <span><strong class="text-[var(--color-fg)]">Just checking</strong> what someone sent you? Use the viewer. Quick look, then close the tab — nothing saved.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">💾</span>
+          <span><strong class="text-[var(--color-fg)]">Saving it elsewhere</strong> (email, Slack, work portal, Word, etc.)? Use the
+            <a href={b("/")} class="text-[var(--color-accent)] hover:underline">converter</a> to get a JPG/PNG/WebP/AVIF file.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)] shrink-0" aria-hidden="true">🔍</span>
+          <span><strong class="text-[var(--color-fg)]">Curious about the metadata</strong> (camera, GPS, date)? Use the
+            <a href={b("/heic-exif")} class="text-[var(--color-accent)] hover:underline">EXIF reader</a>.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">How {site.name} viewer works</h2>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        Your file never leaves your browser. We use a WebAssembly build of
+        libheif (the open-source HEIF decoder) running directly in a Web Worker
+        on your device. The decoded pixels stay on the page; once you close
+        the tab, they're gone — there's no server, no cache, no copy stored
+        anywhere.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        That's also why it works <strong class="text-[var(--color-fg)]">offline</strong>
+        once the page is loaded — no network calls are involved in the decode.
+      </p>
+    </section>
+
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+      <a href={b("/heic-exif")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+        <h3 class="font-bold mb-1">HEIC EXIF reader →</h3>
+        <p class="text-[var(--color-muted)]">See the GPS, camera, lens, date and other metadata inside your photo.</p>
+      </a>
+      <a href={b("/strip-heic-exif")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+        <h3 class="font-bold mb-1">Strip HEIC EXIF →</h3>
+        <p class="text-[var(--color-muted)]">Remove GPS and camera metadata before sharing. Privacy in one click.</p>
+      </a>
+      <a href={b("/")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+        <h3 class="font-bold mb-1">Convert HEIC →</h3>
+        <p class="text-[var(--color-muted)]">Save as JPG, PNG, WebP or AVIF. Single file or batch of 200.</p>
+      </a>
+    </div>
+  </div>
+</Layout>
