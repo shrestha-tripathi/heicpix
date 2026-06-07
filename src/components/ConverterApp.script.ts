@@ -330,14 +330,24 @@ function makeRow(item: QueueItem): HTMLLIElement {
       name.replaceWith(link);
       break;
     }
-    case "error":
-      sizeLabel.textContent = item.status.message;
-      sizeLabel.classList.add("text-[var(--color-error)]");
+    case "error": {
+      // Long error sentences need to wrap on mobile — they don't fit in
+      // the tabular-numbered `sizeLabel` slot on the right of topRow.
+      // Restore sizeLabel to show the original file size (preserves row
+      // symmetry with the other states), and surface the error message
+      // on its own full-width line below the progress bar.
+      sizeLabel.textContent = formatBytes(item.file.size);
       progressFill.style.width = "100%";
       progressFill.style.backgroundColor = "var(--color-error)";
+      const errorLine = document.createElement("p");
+      errorLine.className =
+        "mt-1.5 text-xs text-[var(--color-error)] leading-snug break-words";
+      errorLine.textContent = item.status.message;
+      mid.appendChild(errorLine);
       status.textContent = "failed";
       status.classList.add("text-[var(--color-error)]");
       break;
+    }
   }
 
   return li;
