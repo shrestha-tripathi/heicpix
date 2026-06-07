@@ -12,6 +12,7 @@
 
 import exifr from "exifr";
 import { poolConvert } from "./workerPool";
+import { extFor, type OutputFormat } from "./conversionWorker";
 
 export interface ExifRow {
   label: string;
@@ -110,21 +111,52 @@ export async function readExif(file: File): Promise<ExifReadResult> {
 }
 
 /**
- * Strip ALL metadata from a HEIC by decoding + re-encoding as JPG.
+ * Strip ALL metadata from a HEIC by decoding + re-encoding into the chosen
+ * output format. The browser's canvas re-encode naturally produces
+ * metadata-free output for any encoder (jpg/png/webp/avif), so the result
+ * has zero EXIF / GPS / camera info regardless of format.
  *
- * Why output JPG and not HEIC: we have no HEIC encoder, only a libheif
- * decoder. The browser's canvas re-encode naturally produces metadata-free
- * output for any encoder (jpg/png/webp/avif), so JPG is the most-compatible
- * choice for "I want this photo without the GPS / camera info."
+ * Why no HEIC option: re-encoding to HEIC would require an HEVC encoder.
+ * No browser ships one, and no WASM library bundles one (the only HEVC
+ * encoders — x265, kvazaar — are GPL and >2 MB). True HEIC-preserving EXIF
+ * strip would require parsing the ISOBMFF container and surgically deleting
+ * the `Exif` item box; that's planned for a future release (see
+ * heicpix-project skill, "v0.7 future work").
  *
- * Returns a Blob (image/jpeg) with no EXIF, no GPS, no anything.
+ * Returns a Blob (image/{jpg|png|webp|avif}) with no metadata.
+ */
+export async function stripExifInto(
+  file: File,
+  format: OutputFormat,
+  quality?: number,
+): Promise<{ blob: Blob; width: number; height: number; outName: string; format: OutputFormat }> {
+  const buf = await file.arrayBuffer();
+  const result = await poolConvert(buf, { format, quality });
+  const dot = file.name.lastIndexOf(".");
+  const base = dot >= 0 ? file.name.slice(0, dot) : file.name;
+  return {
+    blob: result.blob,
+    width: result.width,
+    height: result.height,
+    outName: `${base}-clean.${extFor(format)}`,
+    format,
+  };
+}
+
+/**
+ * Backwards-compatible wrapper — JPG-only strip. Retained so old callers
+ * (and external links from blog posts mentioning "*-stripped.jpg") don't
+ * break. New code should prefer `stripExifInto`.
+ *
+ * @deprecated use stripExifInto(file, "jpg", quality)
  */
 export async function stripExifViaJpg(
   file: File,
   quality = 0.92,
 ): Promise<{ blob: Blob; width: number; height: number; outName: string }> {
-  const buf = await file.arrayBuffer();
-  const result = await poolConvert(buf, { format: "jpg", quality });
+  const result = await stripExifInto(file, "jpg", quality);
+  // Preserve the OLD output name suffix (-stripped.jpg) for any pre-existing
+  // call sites that might pattern-match it. New stripExifInto uses -clean.
   const dot = file.name.lastIndexOf(".");
   const base = dot >= 0 ? file.name.slice(0, dot) : file.name;
   return {

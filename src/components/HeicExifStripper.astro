@@ -1,14 +1,36 @@
 ---
 /**
- * Strip HEIC EXIF — drag-drop a HEIC, get a metadata-free JPG.
+ * Strip HEIC EXIF — drag-drop a HEIC, get a metadata-free copy in your
+ * chosen output format (JPG / PNG / WebP / AVIF).
  *
- * Approach: decode HEIC via libheif → re-encode as JPG via canvas. Canvas
+ * Approach: decode HEIC via libheif → re-encode via canvas. Canvas
  * encode produces NO metadata by design, so the output is naturally clean
  * (no GPS, no camera, no date, no Apple proprietary fields).
+ *
+ * HEIC-as-output is unavailable: no browser ships an HEVC encoder, and
+ * the GPL-licensed HEVC encoders (x265, kvazaar) aren't shippable as
+ * WASM bundles. A true HEIC-preserving strip would require ISOBMFF byte
+ * surgery — planned for v0.7+.
  */
+import FormatToggle from "./FormatToggle.astro";
 ---
 
 <section class="w-full max-w-3xl mx-auto" id="strip-app">
+  <!-- Output format + quality controls. Namespace="strip-format" so this
+       toggle has its own storage / events / dataset, independent from the
+       main converter's toggle. -->
+  <div class="mb-6 space-y-2">
+    <FormatToggle namespace="strip-format" />
+    <p class="text-xs text-[var(--color-muted)]">
+      Output as JPG · PNG · WebP · AVIF — all stripped of GPS, camera, date.
+      <span class="block sm:inline">
+        (HEIC output isn't possible — browsers can't encode HEIC. <a
+          href="/blog/heic-vs-jpg/"
+          class="text-[var(--color-accent)] underline">why?</a>)
+      </span>
+    </p>
+  </div>
+
   <div
     id="strip-dropzone"
     data-state="idle"

@@ -67,17 +67,31 @@ const breadcrumbLd = breadcrumb({ name: "Strip HEIC EXIF", path: "/strip-heic-ex
     </section>
 
     <section class="mt-12">
-      <h2 class="text-2xl font-bold mb-4">Why we output JPG instead of HEIC</h2>
+      <h2 class="text-2xl font-bold mb-4">Output formats — and why no HEIC</h2>
       <p class="text-[var(--color-muted)] leading-relaxed mb-3">
-        Browsers can <em>decode</em> HEIC (via WebAssembly) but can't
-        <em>encode</em> it — no major browser ships a HEIC encoder yet. So we
-        decode the original and re-encode as JPG using the browser's built-in
-        encoder. As a bonus, JPG opens everywhere — Slack, WhatsApp, Outlook,
-        Instagram, every website upload field.
+        You can output in <strong class="text-[var(--color-fg)]">JPG</strong>
+        (universal compatibility, smallest size),
+        <strong class="text-[var(--color-fg)]">PNG</strong> (lossless),
+        <strong class="text-[var(--color-fg)]">WebP</strong> (modern, ~30% smaller than JPG), or
+        <strong class="text-[var(--color-fg)]">AVIF</strong> (newest, smallest — Chrome 124+ only).
+        Pick the format that fits where you're sending it: JPG for everything older or unknown,
+        WebP for web uploads, AVIF if you control the receiving end.
+      </p>
+      <p class="text-[var(--color-muted)] leading-relaxed mb-3">
+        <strong class="text-[var(--color-fg)]">Why no HEIC output?</strong> Browsers
+        can <em>decode</em> HEIC (via WebAssembly) but can't
+        <em>encode</em> it — HEIC requires HEVC encoding, and no major browser
+        ships an HEVC encoder. The only WASM-shippable HEVC encoders are GPL
+        (x265, kvazaar) and over 2 MB each. A future version may ship a
+        "preserve HEIC" option that surgically deletes only the metadata
+        boxes from the original ISOBMFF container — leaving the original
+        HEVC frames intact. Until then, every re-encode goes through the
+        browser's built-in encoder for your chosen format.
       </p>
       <p class="text-[var(--color-muted)] leading-relaxed">
-        The re-encode happens at quality 0.92 (matching iOS's own export
-        quality), so visually you won't see a difference.
+        Lossy formats (JPG / WebP / AVIF) default to quality 0.92 — matching
+        iOS's own export quality — and you can tweak the slider to taste.
+        PNG is lossless and ignores the quality setting.
       </p>
     </section>
 
@@ -127,9 +141,10 @@ const breadcrumbLd = breadcrumb({ name: "Strip HEIC EXIF", path: "/strip-heic-ex
         <p class="text-[var(--color-muted)]">Use the EXIF reader to check what's there before stripping.</p>
       </a>
       <a href={b("/")} class="p-4 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
-        <h3 class="font-bold mb-1">Need a different output format? →</h3>
-        <p class="text-[var(--color-muted)]">Use the main converter for PNG, WebP or AVIF output (also metadata-free).</p>
+        <h3 class="font-bold mb-1">Just need the file format converted? →</h3>
+        <p class="text-[var(--color-muted)]">The main converter handles bulk batches with no quality slider opinions. (Output is also metadata-free since canvas encoding strips EXIF.)</p>
       </a>
+    </div>
     </div>
   </div>
 </Layout>

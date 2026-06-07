@@ -1,36 +1,85 @@
 ---
 /**
- * Format + quality controls for the converter.
+ * Format + quality controls for HEIC pipelines.
  *
  * Renders:
  *   1. Four-format toggle: JPG / PNG / WebP / AVIF
  *      - AVIF auto-disables if the browser doesn't encode AVIF
  *        (Chrome 124+ only as of 2026)
- *      - Active button persists to localStorage under `${storageNs}:format`
+ *      - Active button persists to localStorage under `${storageNs}:${namespace}:format`
  *   2. Quality slider for lossy formats (JPG/WebP/AVIF)
  *      - Hidden when PNG is active (lossless = no quality knob)
- *      - Persists under `${storageNs}:quality`
+ *      - Persists under `${storageNs}:${namespace}:quality`
  *      - Range 0.30..1.00, step 0.05
  *      - Default 0.92 (matches iOS native export)
  *
- * Both controls dispatch `heicpix:format-change` and
- * `heicpix:quality-change` CustomEvents so the converter can react
- * (regenerate filenames, update size hints, etc).
+ * Both controls dispatch `heicpix:${namespace}-format-change` and
+ * `heicpix:${namespace}-quality-change` CustomEvents so the page's
+ * pipeline (converter / stripper / etc) can react.
+ *
+ * Each namespace gets its own DOM ids, storage keys, dataset attrs,
+ * and event names — so multiple toggles can coexist on different pages
+ * (or even on the same page) without sharing state.
  *
  * Why these together: they're conceptually one widget — "how do you
  * want the output." Keeping them in one Astro component avoids
- * orchestrating two scripts that both read/write document.documentElement.dataset.
+ * orchestrating two scripts.
  */
 import { site } from "../site.config";
+
+interface Props {
+  /**
+   * Namespace for storage keys, DOM ids, dataset attributes, and event names.
+   * Defaults to "format" (the original main-converter namespace, kept for
+   * backwards compatibility with existing call sites).
+   *
+   * Examples:
+   *   namespace="format"        → main converter (default)
+   *   namespace="strip-format"  → strip-exif tool
+   */
+  namespace?: string;
+}
+
+const { namespace = "format" } = Astro.props as Props;
+// For namespace="format" (the default / main converter), preserve the
+// original DOM ids verbatim so existing CSS / DevTools muscle memory
+// keeps working. Other namespaces get prefixed ids.
+const isDefault = namespace === "format";
+const toggleId = isDefault ? "format-toggle" : `${namespace}-toggle`;
+const qualityWrapId = isDefault ? "quality-control" : `${namespace}-quality-control`;
+const sliderId = isDefault ? "quality-slider" : `${namespace}-quality-slider`;
+const valueId = isDefault ? "quality-value" : `${namespace}-quality-value`;
+const formatEvent = isDefault
+  ? "heicpix:format-change"
+  : `heicpix:${namespace}-change`;
+const qualityEvent = isDefault
+  ? "heicpix:quality-change"
+  : `heicpix:${namespace}-quality-change`;
+// dataset attr names need to be valid camelCase. For "format" → "format",
+// for "strip-format" → "stripFormat".
+function toDatasetName(ns: string, suffix: string): string {
+  if (ns === "format") return suffix; // "format" or "quality"
+  // Convert kebab → camel and append suffix (capitalized)
+  const camel = ns.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  return suffix === "format" ? camel : `${camel}${suffix[0].toUpperCase()}${suffix.slice(1)}`;
+}
+const formatDatasetAttr = toDatasetName(namespace, "format");
+const qualityDatasetAttr = toDatasetName(namespace, "quality");
+const formatStorageKey = isDefault
+  ? `${site.storageNs}:format`
+  : `${site.storageNs}:${namespace}`;
+const qualityStorageKey = isDefault
+  ? `${site.storageNs}:quality`
+  : `${site.storageNs}:${namespace}-quality`;
 ---
 
-<div class="space-y-3">
+<div class="space-y-3" data-format-widget={namespace}>
   <!-- Format row -->
   <div
-    id="format-toggle"
+    id={toggleId}
     role="radiogroup"
     aria-label="Output format"
-    class="inline-flex flex-wrap rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 text-sm font-semibold gap-0"
+    class="inline-flex flex-wrap rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 text-sm font-semibold gap-0 format-toggle-group"
   >
     <button
       type="button"
@@ -74,15 +123,15 @@ import { site } from "../site.config";
 
   <!-- Quality row (hidden when PNG is active) -->
   <div
-    id="quality-control"
-    class="flex items-center gap-3 text-sm"
+    id={qualityWrapId}
+    class="flex items-center gap-3 text-sm quality-control"
     data-show="true"
   >
-    <label for="quality-slider" class="text-[var(--color-muted)] font-medium">
+    <label for={sliderId} class="text-[var(--color-muted)] font-medium">
       Quality
     </label>
     <input
-      id="quality-slider"
+      id={sliderId}
       type="range"
       min="0.3"
       max="1"
@@ -92,7 +141,7 @@ import { site } from "../site.config";
       aria-label="Output quality (lossy formats)"
     />
     <span
-      id="quality-value"
+      id={valueId}
       class="font-mono text-xs text-[var(--color-fg)] tabular-nums w-8 text-right"
     >
       92%
@@ -101,23 +150,24 @@ import { site } from "../site.config";
 </div>
 
 <style>
-  #format-toggle button[aria-checked="true"] {
+  /* Scope styles by class so multiple toggles on the same page work. */
+  .format-toggle-group button[aria-checked="true"] {
     background-color: var(--color-accent);
     color: var(--color-accent-fg);
   }
-  #format-toggle button[aria-checked="false"] {
+  .format-toggle-group button[aria-checked="false"] {
     color: var(--color-muted);
   }
-  #format-toggle button[aria-checked="false"]:hover:not([disabled]) {
+  .format-toggle-group button[aria-checked="false"]:hover:not([disabled]) {
     color: var(--color-fg);
     background-color: var(--color-bg);
   }
-  #format-toggle button[disabled] {
+  .format-toggle-group button[disabled] {
     opacity: 0.4;
     cursor: not-allowed;
     text-decoration: line-through;
   }
-  #quality-control[data-show="false"] {
+  .quality-control[data-show="false"] {
     display: none;
   }
 </style>
@@ -125,16 +175,24 @@ import { site } from "../site.config";
 <script
   is:inline
   define:vars={{
-    formatKey: `${site.storageNs}:format`,
-    qualityKey: `${site.storageNs}:quality`,
+    toggleId,
+    qualityWrapId,
+    sliderId,
+    valueId,
+    formatStorageKey,
+    qualityStorageKey,
+    formatEvent,
+    qualityEvent,
+    formatDatasetAttr,
+    qualityDatasetAttr,
   }}
 >
   (function () {
-    const group = document.getElementById("format-toggle");
-    const qualityWrap = document.getElementById("quality-control");
-    const slider = document.getElementById("quality-slider");
-    const valueEl = document.getElementById("quality-value");
-    if (!group || !qualityWrap || !slider || !valueEl) return;
+    const group = document.getElementById(toggleId);
+    const qualityWrapEl = document.getElementById(qualityWrapId);
+    const slider = document.getElementById(sliderId);
+    const valueEl = document.getElementById(valueId);
+    if (!group || !qualityWrapEl || !slider || !valueEl) return;
 
     const buttons = group.querySelectorAll("button[data-format]");
     const valid = new Set(["jpg", "png", "webp", "avif"]);
@@ -142,7 +200,7 @@ import { site } from "../site.config";
 
     function readQuality() {
       try {
-        const stored = parseFloat(localStorage.getItem(qualityKey));
+        const stored = parseFloat(localStorage.getItem(qualityStorageKey));
         if (stored >= 0.3 && stored <= 1) return stored;
       } catch (e) {}
       return 0.92;
@@ -150,7 +208,7 @@ import { site } from "../site.config";
 
     function writeQuality(q) {
       try {
-        localStorage.setItem(qualityKey, String(q));
+        localStorage.setItem(qualityStorageKey, String(q));
       } catch (e) {}
     }
 
@@ -158,11 +216,11 @@ import { site } from "../site.config";
       const opts = options || {};
       slider.value = String(q);
       valueEl.textContent = Math.round(q * 100) + "%";
-      document.documentElement.dataset.quality = String(q);
+      document.documentElement.dataset[qualityDatasetAttr] = String(q);
       writeQuality(q);
       if (!opts.silent) {
         document.dispatchEvent(
-          new CustomEvent("heicpix:quality-change", { detail: { quality: q } }),
+          new CustomEvent(qualityEvent, { detail: { quality: q } }),
         );
       }
     }
@@ -173,17 +231,17 @@ import { site } from "../site.config";
         const matches = btn.dataset.format === format;
         btn.setAttribute("aria-checked", matches ? "true" : "false");
       });
-      document.documentElement.dataset.format = format;
+      document.documentElement.dataset[formatDatasetAttr] = format;
       try {
-        localStorage.setItem(formatKey, format);
+        localStorage.setItem(formatStorageKey, format);
       } catch (e) {}
 
       // Show/hide quality control based on format
-      qualityWrap.dataset.show = lossy.has(format) ? "true" : "false";
+      qualityWrapEl.dataset.show = lossy.has(format) ? "true" : "false";
 
       if (!opts.silent) {
         document.dispatchEvent(
-          new CustomEvent("heicpix:format-change", { detail: { format } }),
+          new CustomEvent(formatEvent, { detail: { format } }),
         );
       }
     }
@@ -191,7 +249,7 @@ import { site } from "../site.config";
     // Hydrate from storage
     let initial = "jpg";
     try {
-      const stored = localStorage.getItem(formatKey);
+      const stored = localStorage.getItem(formatStorageKey);
       if (valid.has(stored)) initial = stored;
     } catch (e) {}
     setQuality(readQuality(), { silent: true });
@@ -246,7 +304,7 @@ import { site } from "../site.config";
             "AVIF encoding requires Chrome 124+ or Edge 124+. Try WebP — almost as small, universally supported.",
           );
           // If AVIF was the persisted choice, fall back to WebP
-          if (document.documentElement.dataset.format === "avif") {
+          if (document.documentElement.dataset[formatDatasetAttr] === "avif") {
             setFormat("webp");
           }
         }

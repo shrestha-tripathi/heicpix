@@ -1,15 +1,22 @@
 /**
  * Strip-EXIF logic. For each HEIC file:
  *   1. Decode via libheif worker
- *   2. Re-encode as JPG (no metadata by canvas spec)
+ *   2. Re-encode into the currently-selected output format (JPG/PNG/WebP/AVIF)
+ *      via canvas — produces NO metadata by spec, so all EXIF / GPS / camera
+ *      info is stripped naturally.
  *   3. Append a row with download link + "before/after" byte counts
  *
- * Batch download zips all stripped JPGs together via client-zip.
+ * Batch download zips all stripped files together via client-zip.
+ *
+ * Output format is read fresh on every enqueue, so a user can convert
+ * file #1 as JPG, switch to PNG, drop file #2 → mixed-format batch.
+ * Already-converted files keep their original output format.
  */
 
 import { downloadZip } from "client-zip";
-import { stripExifViaJpg, formatBytes } from "../lib/exifTools";
+import { stripExifInto, formatBytes } from "../lib/exifTools";
 import { downloadBlob } from "../lib/convertHeic";
+import type { OutputFormat } from "../lib/conversionWorker";
 
 interface StrippedItem {
   id: string;
@@ -17,7 +24,10 @@ interface StrippedItem {
   originalSize: number;
   outBlob: Blob;
   outName: string;
+  format: OutputFormat;
 }
+
+const VALID_FORMATS = new Set<OutputFormat>(["jpg", "png", "webp", "avif"]);
 
 const dropzone = document.getElementById("strip-dropzone") as HTMLDivElement | null;
 const input = document.getElementById("strip-file-input") as HTMLInputElement | null;
@@ -31,6 +41,18 @@ const clearBtn = document.getElementById("btn-strip-clear") as HTMLButtonElement
 
 const items: StrippedItem[] = [];
 
+/** Read the strip-page format toggle's current value (set by FormatToggle.astro). */
+function currentStripFormat(): OutputFormat {
+  const f = document.documentElement.dataset.stripFormat;
+  return f && VALID_FORMATS.has(f as OutputFormat) ? (f as OutputFormat) : "jpg";
+}
+
+/** Read the strip-page quality slider's current value. */
+function currentStripQuality(): number {
+  const q = parseFloat(document.documentElement.dataset.stripFormatQuality ?? "");
+  return q >= 0.3 && q <= 1 ? q : 0.92;
+}
+
 function setStatus(msg: string) {
   if (!status) return;
   status.textContent = msg;
@@ -43,16 +65,42 @@ function setError(msg: string) {
   errorEl.classList.toggle("hidden", !msg);
 }
 
+/** Pretty label for an OutputFormat — "jpg" → "JPG", "webp" → "WebP", etc. */
+function formatLabel(fmt: OutputFormat): string {
+  return fmt === "webp" ? "WebP" : fmt === "avif" ? "AVIF" : fmt.toUpperCase();
+}
+
 function refreshSummary() {
   if (!summaryBar || !summaryLabel) return;
   if (items.length === 0) {
     summaryBar.classList.add("hidden");
     return;
   }
-  const total = items.reduce((sum, i) => sum + i.outBlob.size, 0);
-  summaryLabel.textContent = `${items.length} clean ${
-    items.length === 1 ? "photo" : "photos"
-  } · ${formatBytes(total)} total · metadata removed`;
+  const totalSize = items.reduce((sum, i) => sum + i.outBlob.size, 0);
+  const total = items.length;
+  const photosWord = total === 1 ? "photo" : "photos";
+
+  // Bucket by actual output format (NOT the current toggle, which may have
+  // changed mid-batch). Derive label from each item's stored format.
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    const label = formatLabel(item.format);
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }
+
+  let summary: string;
+  if (counts.size === 1) {
+    const [[label]] = counts;
+    summary = `${total} clean ${label} ${photosWord} · ${formatBytes(totalSize)} total · metadata removed`;
+  } else {
+    // Mixed batch — break the format mix out into its own clause.
+    const parts = [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([label, n]) => `${n} ${label}`);
+    summary = `${total} clean ${photosWord} (${parts.join(" · ")}) · ${formatBytes(totalSize)} total · metadata removed`;
+  }
+
+  summaryLabel.textContent = summary;
   summaryBar.classList.remove("hidden");
 }
 
@@ -72,7 +120,7 @@ function appendRow(item: StrippedItem) {
   sizeLine.className = "text-xs text-[var(--color-muted)] mt-0.5";
   sizeLine.textContent = `${formatBytes(item.originalSize)} HEIC → ${formatBytes(
     item.outBlob.size,
-  )} clean JPG · no GPS, no camera info, no date`;
+  )} clean ${formatLabel(item.format)} · no GPS, no camera info, no date`;
 
   info.appendChild(name);
   info.appendChild(sizeLine);
@@ -95,14 +143,20 @@ async function processOne(file: File) {
     return;
   }
 
+  // Read fresh format + quality on every file so toggle changes mid-batch
+  // affect ONLY subsequent files, never retroactively.
+  const chosenFormat = currentStripFormat();
+  const chosenQuality = currentStripQuality();
+
   try {
-    const stripped = await stripExifViaJpg(file);
+    const stripped = await stripExifInto(file, chosenFormat, chosenQuality);
     const item: StrippedItem = {
       id: crypto.randomUUID(),
       originalName: file.name,
       originalSize: file.size,
       outBlob: stripped.blob,
       outName: stripped.outName,
+      format: stripped.format,
     };
     items.push(item);
     appendRow(item);
@@ -172,3 +226,11 @@ clearBtn?.addEventListener("click", () => {
   refreshSummary();
   setError("");
 });
+
+// NOTE: we deliberately do NOT listen to `heicpix:strip-format-change` here.
+// Already-stripped files keep their original output format — re-rendering
+// the summary on toggle flips would either:
+//   (a) silently relabel everything to the new format (lie about the output)
+//   (b) do nothing useful (the existing items already have the right labels)
+// The summary derives format from each item's stored .format, so it's
+// already correct without listening to format changes.
