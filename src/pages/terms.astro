@@ -1,0 +1,340 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+/**
+ * Terms & Conditions — legal contract between user and operator.
+ *
+ * Structure: definitions, acceptance, service description, acceptable
+ * use, IP, third-party services, disclaimer, limitation of liability,
+ * indemnification, modifications, governing law, contact.
+ *
+ * This is intentionally short and plain-English. For an indie/open-source
+ * tool, a 30-page legalese ToS is both unenforceable in practice and a
+ * trust signal in the wrong direction.
+ */
+
+const lastUpdated = "June 7, 2026";
+const lastUpdatedIso = "2026-06-07";
+
+const termsSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${site.url}/terms#terms`,
+  url: `${site.url}/terms`,
+  name: `Terms & Conditions — ${site.shortName}`,
+  description: `Terms of service for ${site.shortName} — acceptable use, disclaimer of warranty, limitation of liability, and governing law.`,
+  dateModified: lastUpdatedIso,
+  publisher: { "@id": `${site.url}/#organization` },
+};
+
+const breadcrumbLd = breadcrumb({ name: "Terms", path: "/terms" });
+---
+
+<Layout
+  title={`Terms & Conditions — ${site.shortName}`}
+  description={`Terms of service for ${site.shortName}: acceptable use, disclaimer of warranty, limitation of liability, governing law. Plain-English, no surprises.`}
+  jsonLd={[termsSchema, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>Terms</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Terms &amp; Conditions
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Last updated: {lastUpdated}
+      </p>
+    </header>
+
+    <div
+      class="mb-10 p-4 rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/[0.06]"
+    >
+      <p class="text-sm text-[var(--color-muted)]">
+        <strong class="text-[var(--color-fg)]">Plain-English version:</strong>
+        Use {site.name} for whatever you want as long as it's legal.
+        It's free, it works in your browser, we don't promise it's bug-free,
+        and you can't sue us if a conversion goes wrong. Standard indie-tool
+        terms with no surprises.
+      </p>
+    </div>
+
+    <div class="text-[var(--color-muted)] leading-relaxed space-y-8">
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          1. Definitions
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <strong class="text-[var(--color-fg)]">"Service"</strong> means
+            the {site.name} web application available at
+            <a href={site.url} class="text-[var(--color-accent)] hover:underline">{site.domain}</a>
+            and any subdomains, including future apps under the same
+            domain.
+          </li>
+          <li>
+            <strong class="text-[var(--color-fg)]">"We", "us", "our"</strong>
+            refers to {site.author}, the operator of the Service.
+          </li>
+          <li>
+            <strong class="text-[var(--color-fg)]">"You", "your"</strong>
+            refers to anyone accessing or using the Service.
+          </li>
+          <li>
+            <strong class="text-[var(--color-fg)]">"Content"</strong> means
+            the files (HEIC photos, etc.) you process locally through the
+            Service. Note: we never receive Content because the Service is
+            fully client-side.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          2. Acceptance
+        </h2>
+        <p>
+          By accessing or using the Service, you agree to be bound by
+          these Terms. If you don't agree, don't use the Service. These
+          Terms also incorporate by reference our
+          <a href={b("/privacy-policy")} class="text-[var(--color-accent)] hover:underline">Privacy Policy</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          3. What the Service does
+        </h2>
+        <p>
+          {site.name} provides browser-based tools to convert HEIC image
+          files to JPG, PNG, WebP, or AVIF, as well as related utilities
+          (HEIC Viewer, EXIF Reader, EXIF Stripper). All processing runs
+          on your device using WebAssembly. We do not provide cloud storage,
+          accounts, or server-side processing.
+        </p>
+        <p class="mt-3">
+          The Service is provided free of charge with no premium tier, no
+          paid features, and no in-app purchases planned. See our
+          <a href={b("/free-forever")} class="text-[var(--color-accent)] hover:underline">free-forever pledge</a>
+          for the operating-cost explanation.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          4. Acceptable use
+        </h2>
+        <p>
+          You agree not to use the Service to:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-1">
+          <li>Convert or process Content you do not have the legal right to use</li>
+          <li>Violate any law, regulation, or third-party right</li>
+          <li>Attempt to break, attack, or reverse-engineer the Service in ways that disrupt other users</li>
+          <li>Scrape the Service to build a competing product (we'd much rather you ask — we may help)</li>
+          <li>Misrepresent your identity or affiliation in correspondence with us</li>
+        </ul>
+        <p class="mt-3">
+          Because the Service runs entirely in your browser, we have no
+          technical ability to police your individual use — these are
+          contractual obligations you accept by using the Service.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          5. Your content
+        </h2>
+        <p>
+          You retain all rights to the Content you process through the
+          Service. Because conversion happens entirely on your device, we
+          never receive, store, or have access to your Content, and
+          therefore acquire no rights of any kind in it.
+        </p>
+        <p class="mt-3">
+          You are solely responsible for the Content you process and for
+          ensuring you have the rights to process it.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          6. Intellectual property
+        </h2>
+        <p>
+          The Service, including its design, layout, code, branding, and
+          original content, is owned by {site.author} and protected by
+          applicable copyright and trademark law. The name "{site.name}"
+          and associated logo are our marks.
+        </p>
+        <p class="mt-3">
+          The Service uses open-source software including
+          <a
+            href="https://github.com/strukturag/libheif"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">libheif</a
+          > (LGPL),
+          <a
+            href="https://astro.build"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">Astro</a
+          > (MIT),
+          <a
+            href="https://tailwindcss.com"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">Tailwind CSS</a
+          > (MIT), and others. Each dependency is governed by its own
+          license.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          7. Third-party services
+        </h2>
+        <p>
+          The Service relies on third-party infrastructure, including
+          Cloudflare Pages (hosting) and Google Analytics 4 (anonymous
+          analytics). Your use of the Service is also subject to those
+          providers' terms. See our
+          <a href={b("/privacy-policy")} class="text-[var(--color-accent)] hover:underline">Privacy Policy</a>
+          for links to each provider's policies.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          8. Disclaimer of warranty
+        </h2>
+        <p class="uppercase text-xs tracking-wide font-semibold text-[var(--color-fg)]">
+          The service is provided "as is" and "as available", without
+          warranty of any kind, express or implied.
+        </p>
+        <p class="mt-3">
+          We do not warrant that the Service will be uninterrupted, bug-free,
+          or that conversions will produce specific results. While we test
+          extensively, image-conversion software is inherently complex
+          (codec quirks, browser quirks, edge-case input files) and we
+          cannot guarantee perfect output on every file.
+        </p>
+        <p class="mt-3">
+          <strong class="text-[var(--color-fg)]">Keep originals.</strong>
+          Never rely on {site.name} as the sole storage for important
+          photos. Convert copies, verify output, keep the original HEIC
+          until you're sure.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          9. Limitation of liability
+        </h2>
+        <p class="uppercase text-xs tracking-wide font-semibold text-[var(--color-fg)]">
+          To the maximum extent permitted by law, {site.author} shall not
+          be liable for any indirect, incidental, special, consequential,
+          or punitive damages arising from your use of the service.
+        </p>
+        <p class="mt-3">
+          This includes (without limitation) loss of data, loss of profits,
+          loss of revenue, business interruption, or replacement-cost of
+          third-party services — even if we have been advised of the
+          possibility of such damages.
+        </p>
+        <p class="mt-3">
+          Where liability cannot be excluded under applicable law (e.g.
+          gross negligence or wilful misconduct), our total aggregate
+          liability is limited to INR 1,000 (one thousand Indian Rupees)
+          or the equivalent in your local currency. We have not charged
+          you anything for the Service, so this limit reflects the
+          economic reality of the relationship.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          10. Indemnification
+        </h2>
+        <p>
+          You agree to indemnify and hold harmless {site.author} from any
+          claim, demand, or damages (including reasonable legal fees)
+          arising from your use of the Service in violation of these
+          Terms or applicable law.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          11. Modifications &amp; termination
+        </h2>
+        <p>
+          We may modify, suspend, or discontinue the Service at any time
+          without prior notice — though we'll make best effort to announce
+          deprecations 30 days in advance via the homepage or blog.
+        </p>
+        <p class="mt-3">
+          We may also update these Terms at any time. Material changes
+          will be noted on the homepage for at least 14 days. Continued
+          use of the Service after changes constitutes acceptance.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          12. Governing law
+        </h2>
+        <p>
+          These Terms are governed by the laws of {site.jurisdiction},
+          without regard to conflict-of-laws principles. Any dispute
+          shall be subject to the exclusive jurisdiction of the courts
+          of {site.jurisdiction}.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          13. Severability
+        </h2>
+        <p>
+          If any provision of these Terms is found unenforceable, the
+          remaining provisions remain in full force and effect. We will
+          replace the unenforceable provision with the closest enforceable
+          equivalent that reflects our original intent.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          14. Contact
+        </h2>
+        <p>
+          Questions about these Terms? Reach us at:
+        </p>
+        <p class="mt-3">
+          Email:
+          <a href={`mailto:${site.contactEmail}`} class="text-[var(--color-accent)] hover:underline">
+            {site.contactEmail}
+          </a>
+        </p>
+        <p class="mt-2">
+          Operator: {site.author}<br />
+          Jurisdiction: {site.jurisdiction}
+        </p>
+      </section>
+    </div>
+
+    <div
+      class="mt-12 pt-6 border-t border-[var(--color-border)] text-xs text-[var(--color-muted)]"
+    >
+      <p>
+        See also: <a href={b("/privacy-policy")} class="text-[var(--color-accent)] hover:underline">Privacy Policy</a> ·
+        <a href={b("/privacy")} class="text-[var(--color-accent)] hover:underline">Privacy by design</a>
+      </p>
+    </div>
+  </div>
+</Layout>

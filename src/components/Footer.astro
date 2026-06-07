@@ -7,7 +7,7 @@ const year = new Date().getFullYear();
 
 <footer class="border-t border-[var(--color-border)] mt-24">
   <div class="max-w-6xl mx-auto px-6 py-12">
-    <div class="grid grid-cols-2 sm:grid-cols-6 gap-8 text-sm">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-8 text-sm">
       <div class="col-span-2 sm:col-span-1">
         <a
           href={b("/")}
@@ -64,13 +64,14 @@ const year = new Date().getFullYear();
       </div>
 
       <div>
-        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">About</h3>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Company</h3>
         <ul class="space-y-2 text-[var(--color-muted)]">
-          <li><a href={b("/free-forever")} class="hover:text-[var(--color-fg)] font-semibold text-[var(--color-accent)]">Free forever</a></li>
+          <li><a href={b("/about")} class="hover:text-[var(--color-fg)]">About</a></li>
+          <li><a href={b("/contact")} class="hover:text-[var(--color-fg)]">Contact</a></li>
           <li><a href={b("/blog")} class="hover:text-[var(--color-fg)]">Blog</a></li>
           <li><a href={b("/faq")} class="hover:text-[var(--color-fg)]">FAQ</a></li>
           <li><a href={b("/how-it-works")} class="hover:text-[var(--color-fg)]">How it works</a></li>
-          <li><a href={b("/privacy")} class="hover:text-[var(--color-fg)]">Privacy</a></li>
+          <li><a href={b("/free-forever")} class="hover:text-[var(--color-fg)] font-semibold text-[var(--color-accent)]">Free forever</a></li>
           <li>
             <a
               href={site.org.url}
@@ -80,6 +81,15 @@ const year = new Date().getFullYear();
               {site.org.name}
             </a>
           </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3 text-[var(--color-fg)]">Legal</h3>
+        <ul class="space-y-2 text-[var(--color-muted)]">
+          <li><a href={b("/privacy-policy")} class="hover:text-[var(--color-fg)]">Privacy Policy</a></li>
+          <li><a href={b("/privacy")} class="hover:text-[var(--color-fg)]">Privacy by design</a></li>
+          <li><a href={b("/terms")} class="hover:text-[var(--color-fg)]">Terms &amp; Conditions</a></li>
         </ul>
       </div>
     </div>

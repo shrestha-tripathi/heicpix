@@ -1,0 +1,243 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+/**
+ * About page — who built this, why, and the philosophy behind it.
+ *
+ * SEO purpose: trust signal for AdSense + Google E-E-A-T (Experience,
+ * Expertise, Authoritativeness, Trustworthiness). Reviewers and Google's
+ * quality raters both check for a real human/team behind the product.
+ */
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": `${site.url}/about#about`,
+  url: `${site.url}/about`,
+  name: `About ${site.shortName}`,
+  description: `Who built ${site.shortName} and why — the philosophy of fully client-side HEIC conversion that doesn't upload your photos.`,
+  publisher: { "@id": `${site.url}/#organization` },
+};
+
+const breadcrumbLd = breadcrumb({ name: "About", path: "/about" });
+---
+
+<Layout
+  title={`About — why we built a HEIC converter that never uploads`}
+  description={`${site.shortName} is a fully client-side HEIC converter built on the principle that your photos should never touch someone else's server. Built by ${site.author}, free forever, no premium tier.`}
+  jsonLd={[aboutSchema, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>About</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        About {site.name}
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        A HEIC converter that respects your photos. Built by one developer
+        in India because every other free converter on the internet
+        uploads your files.
+      </p>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        The problem we couldn't stop thinking about
+      </h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          iPhones save photos as HEIC. Most other devices — Windows PCs,
+          older Androids, web tools, email clients, social platforms — don't
+          know what to do with them. So millions of people search "heic to
+          jpg" every month, click the first result, and upload private
+          photos to someone else's server.
+        </p>
+        <p>
+          The free tools are the worst offenders. iloveimg caps you at 5
+          files unless you pay. CloudConvert caps you at 25/day. Both
+          require uploading your photos to a server you can't audit.
+          online-convert is plastered with ads and pop-ups. heictojpg.com
+          uploads to S3 and you have no idea how long they keep it.
+        </p>
+        <p>
+          For a routine task — open a photo your phone took — the privacy
+          tradeoff is absurd. Your wedding photos shouldn't have to leave
+          your device just so your aunt's Windows laptop can open them.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        What we built instead
+      </h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          {site.name} runs entirely inside your browser. When you drop a
+          HEIC file, it stays on your device. Conversion happens via
+          WebAssembly (a compiled version of
+          <a
+            href="https://github.com/strukturag/libheif"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">libheif</a
+          >, the same library macOS uses internally). The output JPG, PNG,
+          WebP, or AVIF is generated in your tab and offered as a download
+          link or saved to a folder you pick.
+        </p>
+        <p>
+          There is no server. There's nothing to upload to. The site is a
+          bunch of static HTML, CSS, and JavaScript files on Cloudflare
+          Pages — no database, no user accounts, no upload endpoint, no
+          background workers processing your photos. You can disable your
+          internet after the page loads and conversion still works.
+        </p>
+        <p>
+          That architectural choice cascades into every other property of
+          the product: unlimited batches (no per-conversion server cost),
+          no signup (no user data to manage), no ads (no business model
+          that depends on inventory), and — most importantly — no
+          "free trial that becomes a subscription" because there's nothing
+          to charge for.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        Our principles
+      </h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-[var(--color-fg)] mb-1">
+            Nothing uploads.
+          </h3>
+          <p>
+            Every feature in {site.name} runs in your browser. We can't
+            see your photos because we have no way to receive them. Open
+            DevTools → Network and verify before you trust us.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[var(--color-fg)] mb-1">
+            Free forever, not "free for now."
+          </h3>
+          <p>
+            There is no premium tier, no LTD pricing, no email-capture
+            wall planned. The running cost of {site.name} is a domain
+            renewal (~₹500/yr) plus Cloudflare's free Pages plan.
+            See <a href={b("/free-forever")} class="text-[var(--color-accent)] hover:underline">our free-forever pledge</a> for the full breakdown.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[var(--color-fg)] mb-1">
+            Unlimited means unlimited.
+          </h3>
+          <p>
+            Drop 5 files, 500 files, or 5000 files — the converter runs on
+            your CPU. We don't impose batch caps because we don't pay for
+            the conversion.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[var(--color-fg)] mb-1">
+            One tool, done well.
+          </h3>
+          <p>
+            {site.name} converts HEIC and lets you inspect HEIC metadata.
+            That's the whole product. We're not bolting on a video editor
+            or a stock-photo library.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        Who built this
+      </h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          {site.name} is built and maintained by {site.author}, a software
+          engineer based in {site.jurisdiction}. It's part of the
+          <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">
+            {site.org.name}
+          </a> family of privacy-first browser tools — small, focused
+          apps that run on your device instead of the cloud.
+        </p>
+        <p>
+          The full source isn't open at the moment (the repo is private
+          while we iterate fast), but the architectural decisions, the
+          stack, and the tradeoffs are all documented in <a
+            href={b("/how-it-works")}
+            class="text-[var(--color-accent)] hover:underline">how-it-works</a
+          > and <a href={b("/free-forever")} class="text-[var(--color-accent)] hover:underline">free-forever</a>.
+          If you'd like the source opened or want to contribute, get in
+          touch — we'll consider it.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        How we keep this free
+      </h2>
+      <div class="text-[var(--color-muted)] leading-relaxed space-y-3">
+        <p>
+          The honest answer: it costs almost nothing to run. There is no
+          server doing conversions on our behalf — your browser does that
+          work, on your CPU, with electricity you're already paying for.
+          Cloudflare Pages hosts the static files on a free plan. The
+          only recurring cost is the domain (~₹500/yr).
+        </p>
+        <p>
+          We're not running a charity — but we're also not running a
+          startup that has to pay back investors. {site.name} is a side
+          project that happens to be useful. Maybe one day there will be
+          unobtrusive sponsorship or affiliate links to recommended
+          camera gear. There will never be ads, watermarks, file caps,
+          email walls, or "upgrade to remove this" friction.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">
+        Get in touch
+      </h2>
+      <p class="text-[var(--color-muted)] leading-relaxed">
+        Bug reports, feature ideas, partnership inquiries, security
+        disclosures, or just to say hello —
+        <a href={b("/contact")} class="text-[var(--color-accent)] hover:underline">
+          here's how to reach us</a
+        >.
+      </p>
+    </section>
+
+    <div
+      class="mt-16 rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/[0.06] p-6 sm:p-8 text-center"
+    >
+      <h2 class="text-2xl font-extrabold tracking-tight mb-2">
+        Try it now
+      </h2>
+      <p class="text-[var(--color-muted)] mb-4">
+        Drop a HEIC file. See for yourself that it never leaves your device.
+      </p>
+      <a
+        href={b("/")}
+        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors no-underline"
+      >
+        Open the converter
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</Layout>

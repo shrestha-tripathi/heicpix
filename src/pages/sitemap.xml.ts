@@ -19,7 +19,13 @@ export const GET: APIRoute = async () => {
     { path: "/faq", priority: "0.8", changefreq: "monthly" },
     { path: "/blog", priority: "0.7", changefreq: "weekly" },
     { path: "/free-forever", priority: "0.7", changefreq: "yearly" },
+    { path: "/about", priority: "0.7", changefreq: "monthly" },
+    { path: "/contact", priority: "0.5", changefreq: "yearly" },
     { path: "/privacy", priority: "0.5", changefreq: "yearly" },
+    // Legal pages (AdSense requires these to be indexed but they are
+    // low SEO priority — see static-site-trust-pages skill)
+    { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
+    { path: "/terms", priority: "0.3", changefreq: "yearly" },
     // Inspector tools (v0.5)
     { path: "/heic-viewer", priority: "0.8", changefreq: "monthly" },
     { path: "/heic-exif", priority: "0.8", changefreq: "monthly" },

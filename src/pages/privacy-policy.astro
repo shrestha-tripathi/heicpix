@@ -1,0 +1,359 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+
+/**
+ * Privacy Policy — legal/AdSense-grade page.
+ *
+ * Distinct from /privacy (which is the technical privacy-by-design
+ * explainer). This page is the formal legal document that AdSense
+ * reviewers, Google quality raters, and any privacy regulator will look
+ * for. Standard legal section structure: data controller, data collected,
+ * lawful basis, retention, third parties, user rights, cookies, children,
+ * contact, changes.
+ *
+ * Both pages link to each other so each serves its purpose.
+ */
+
+const lastUpdated = "June 7, 2026";
+const lastUpdatedIso = "2026-06-07";
+
+const privacyPolicySchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${site.url}/privacy-policy#policy`,
+  url: `${site.url}/privacy-policy`,
+  name: `Privacy Policy — ${site.shortName}`,
+  description: `Legal privacy policy for ${site.shortName}. What we collect, what we don't, your rights under GDPR and CCPA, and how to contact us about your data.`,
+  dateModified: lastUpdatedIso,
+  publisher: { "@id": `${site.url}/#organization` },
+};
+
+const breadcrumbLd = breadcrumb({ name: "Privacy Policy", path: "/privacy-policy" });
+---
+
+<Layout
+  title={`Privacy Policy — ${site.shortName}`}
+  description={`Legal privacy policy for ${site.shortName}. What data we collect (almost none), what we don't (anything about your photos), your rights under GDPR + CCPA, and how to reach us.`}
+  jsonLd={[privacyPolicySchema, breadcrumbLd]}
+>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-10">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>Privacy Policy</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Privacy Policy
+      </h1>
+      <p class="text-lg text-[var(--color-muted)]">
+        Last updated: {lastUpdated}
+      </p>
+    </header>
+
+    <div
+      class="mb-10 p-4 rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/[0.06]"
+    >
+      <p class="text-sm text-[var(--color-muted)]">
+        <strong class="text-[var(--color-fg)]">Plain-English version:</strong>
+        {site.name} is fully client-side. Your photos never leave your
+        device because there is no upload endpoint. We collect anonymous
+        analytics (page views, country, browser) via Google Analytics 4.
+        That's the whole story. For the technical / architectural
+        explanation, see <a
+          href={b("/privacy")}
+          class="text-[var(--color-accent)] hover:underline">our privacy-by-design page</a
+        >.
+      </p>
+    </div>
+
+    <div class="text-[var(--color-muted)] leading-relaxed space-y-8">
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          1. Who we are
+        </h2>
+        <p>
+          This Privacy Policy explains how {site.name} ("we", "us", "our")
+          collects, uses, and protects information when you visit
+          <a href={site.url} class="text-[var(--color-accent)] hover:underline">{site.domain}</a>
+          (the "Service").
+        </p>
+        <p class="mt-3">
+          The Service is operated by {site.author}, based in {site.jurisdiction},
+          as part of the <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">{site.org.name}</a>
+          family of privacy-first browser tools. {site.author} is the data
+          controller for any personal data processed via the Service.
+        </p>
+        <p class="mt-3">
+          Contact for privacy questions:
+          <a href={`mailto:${site.contactEmail}`} class="text-[var(--color-accent)] hover:underline">
+            {site.contactEmail}
+          </a>
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          2. Data we do NOT collect
+        </h2>
+        <p>
+          Because the Service runs entirely in your browser, we do not
+          collect, receive, store, transmit, or have any access to:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-1">
+          <li>Your photos, videos, or any other files you convert</li>
+          <li>Image content, EXIF metadata, GPS coordinates from your photos</li>
+          <li>Filenames of the files you process</li>
+          <li>File sizes, formats, or any conversion outputs</li>
+          <li>Account credentials (we have no accounts)</li>
+          <li>Payment information (we have no paid features)</li>
+          <li>Your name, address, phone number, or other identifying info</li>
+        </ul>
+        <p class="mt-3">
+          You can verify this yourself by opening your browser's Developer
+          Tools (DevTools → Network tab) and watching what requests fire
+          when you convert a photo. The answer: none.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          3. Data we do collect (and why)
+        </h2>
+        <p>
+          We collect the minimum data needed to understand whether the
+          Service is working and being used:
+        </p>
+
+        <h3 class="text-base font-semibold text-[var(--color-fg)] mt-4 mb-2">
+          a) Anonymous analytics (via Google Analytics 4)
+        </h3>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>Pageviews — which pages you visited and in what order</li>
+          <li>Approximate location (country and city) — derived from IP, then IP is anonymized</li>
+          <li>Browser and operating system (so we know which to test)</li>
+          <li>Referrer — which site sent you to {site.name}</li>
+          <li>Device type (mobile vs desktop) and screen size</li>
+        </ul>
+        <p class="mt-3">
+          We have configured Google Analytics to anonymize IP addresses
+          (the last octet is dropped before logging). We do <strong>not</strong>
+          enable Google Signals, ad personalization, or any data sharing
+          for advertising purposes.
+        </p>
+
+        <h3 class="text-base font-semibold text-[var(--color-fg)] mt-4 mb-2">
+          b) Browser local storage
+        </h3>
+        <p>
+          {site.name} stores two small preference values in your browser's
+          <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">localStorage</code>:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-1">
+          <li>Your theme preference (light or dark) under key <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">{site.storageNs}:theme</code></li>
+          <li>Your output format preference under key <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">{site.storageNs}:format</code></li>
+        </ul>
+        <p class="mt-3">
+          These values never leave your browser. They are not sent to us
+          or any third party. Clearing your browser site data wipes them.
+        </p>
+
+        <h3 class="text-base font-semibold text-[var(--color-fg)] mt-4 mb-2">
+          c) Server logs (incidentally)
+        </h3>
+        <p>
+          Cloudflare (our hosting provider) maintains standard HTTP request
+          logs for security and DDoS protection: IP address, request URL,
+          timestamp, user-agent. These are processed by Cloudflare under
+          their own privacy policy and we do not access them for marketing.
+          See <a
+            href="https://www.cloudflare.com/privacypolicy/"
+            class="text-[var(--color-accent)] hover:underline"
+            rel="noopener">Cloudflare's privacy policy</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          4. Lawful basis (GDPR)
+        </h2>
+        <p>
+          Where the EU General Data Protection Regulation applies, our
+          lawful basis for the limited processing described above is:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-1">
+          <li><strong class="text-[var(--color-fg)]">Legitimate interest</strong> for anonymized analytics — understanding aggregate usage to maintain and improve the Service, balanced against minimal individual impact.</li>
+          <li><strong class="text-[var(--color-fg)]">Legitimate interest</strong> for Cloudflare's security logs — protecting the Service from attacks.</li>
+          <li>No processing requires consent because we do not use ad cookies, behavioural profiling, or personal-data sale.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          5. Third-party services
+        </h2>
+        <p>
+          We use the following third-party services. Each is bound by
+          their own privacy policies, which we recommend you review:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-2">
+          <li>
+            <strong class="text-[var(--color-fg)]">Cloudflare Pages</strong> —
+            hosting (static files only).
+            <a
+              href="https://www.cloudflare.com/privacypolicy/"
+              class="text-[var(--color-accent)] hover:underline"
+              rel="noopener">Privacy policy</a
+            >
+          </li>
+          <li>
+            <strong class="text-[var(--color-fg)]">Google Analytics 4</strong> —
+            anonymous usage analytics, IP-anonymized.
+            <a
+              href="https://policies.google.com/privacy"
+              class="text-[var(--color-accent)] hover:underline"
+              rel="noopener">Privacy policy</a
+            >
+          </li>
+        </ul>
+        <p class="mt-3">
+          We do <strong>not</strong> use advertising networks, retargeting
+          pixels, social-media share trackers, fingerprinting libraries,
+          or session-replay tools.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          6. Cookies
+        </h2>
+        <p>
+          {site.name} does <strong>not</strong> set first-party cookies.
+          Google Analytics 4 may set its own cookies
+          (<code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">_ga</code>,
+          <code class="text-[var(--color-fg)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded text-xs">_ga_*</code>)
+          to distinguish unique sessions. These are first-party from your
+          browser's perspective and are not used for cross-site tracking.
+        </p>
+        <p class="mt-3">
+          You can block these cookies in your browser settings or by using
+          an ad blocker like uBlock Origin. The Service works identically
+          with or without analytics enabled.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          7. Your rights
+        </h2>
+        <p>
+          Because we collect almost nothing tied to your identity, most
+          data-subject rights are trivially satisfied. That said, under
+          GDPR / UK GDPR / CCPA / DPDP Act 2023 (India), you have the
+          right to:
+        </p>
+        <ul class="list-disc pl-6 mt-3 space-y-1">
+          <li><strong class="text-[var(--color-fg)]">Access</strong> — request a copy of any personal data we hold about you</li>
+          <li><strong class="text-[var(--color-fg)]">Rectification</strong> — correct any inaccurate data</li>
+          <li><strong class="text-[var(--color-fg)]">Erasure</strong> — request deletion</li>
+          <li><strong class="text-[var(--color-fg)]">Restriction</strong> — limit processing in certain circumstances</li>
+          <li><strong class="text-[var(--color-fg)]">Portability</strong> — receive data in a structured format</li>
+          <li><strong class="text-[var(--color-fg)]">Objection</strong> — object to processing based on legitimate interest</li>
+          <li><strong class="text-[var(--color-fg)]">Withdraw consent</strong> — where processing is based on consent</li>
+          <li><strong class="text-[var(--color-fg)]">Lodge a complaint</strong> with your local data-protection authority</li>
+        </ul>
+        <p class="mt-3">
+          To exercise any of these rights, email
+          <a href={`mailto:${site.contactEmail}`} class="text-[var(--color-accent)] hover:underline">
+            {site.contactEmail}
+          </a>. We will respond within 30 days.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          8. Children's privacy
+        </h2>
+        <p>
+          The Service is not directed at children under 13 (or under 16
+          in the EU). We do not knowingly collect personal data from
+          children. If you believe a child has provided personal data to
+          us, please contact
+          <a href={`mailto:${site.contactEmail}`} class="text-[var(--color-accent)] hover:underline">
+            {site.contactEmail}
+          </a>
+          and we will delete it.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          9. International data transfers
+        </h2>
+        <p>
+          The Service is operated from {site.jurisdiction}. Cloudflare's
+          edge network and Google Analytics process data globally; both
+          are bound by Standard Contractual Clauses for EU/UK data
+          transfers. See their respective policies for details.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          10. Data retention
+        </h2>
+        <p>
+          Google Analytics retains aggregated data for 14 months. Cloudflare
+          access logs are retained per their schedule (typically 30 days).
+          We retain no other data because we collect no other data.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          11. Changes to this policy
+        </h2>
+        <p>
+          We may update this Privacy Policy from time to time to reflect
+          changes in the Service, third-party tools, or applicable law.
+          The "Last updated" date at the top will change accordingly.
+          Material changes will also be noted on the homepage for at
+          least 14 days.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-[var(--color-fg)] mb-3">
+          12. Contact
+        </h2>
+        <p>
+          For any question about this policy or your data, contact us at:
+        </p>
+        <p class="mt-3">
+          Email:
+          <a href={`mailto:${site.contactEmail}`} class="text-[var(--color-accent)] hover:underline">
+            {site.contactEmail}
+          </a>
+        </p>
+        <p class="mt-2">
+          Operator: {site.author}<br />
+          Parent brand: <a href={site.org.url} class="text-[var(--color-accent)] hover:underline" rel="noopener">{site.org.name}</a><br />
+          Jurisdiction: {site.jurisdiction}
+        </p>
+      </section>
+    </div>
+
+    <div
+      class="mt-12 pt-6 border-t border-[var(--color-border)] text-xs text-[var(--color-muted)]"
+    >
+      <p>
+        See also: <a href={b("/privacy")} class="text-[var(--color-accent)] hover:underline">Privacy by design</a> (technical explainer) ·
+        <a href={b("/terms")} class="text-[var(--color-accent)] hover:underline">Terms &amp; Conditions</a>
+      </p>
+    </div>
+  </div>
+</Layout>
