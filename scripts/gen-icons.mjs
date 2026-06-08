@@ -9,6 +9,7 @@
  * icon-512.png, icon-maskable-512.png, og-image.png (1200x630)
  */
 import sharp from "sharp";
+import pngToIco from "png-to-ico";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -109,11 +110,15 @@ const ogBuf = await sharp(Buffer.from(ogSvg())).resize(1200, 630).png().toBuffer
 writeFileSync(join(outDir, "og-image.png"), ogBuf);
 console.log(`✓ og-image.png (1200x630)`);
 
-// favicon.ico = multi-resolution (16, 32, 48). Sharp can't write .ico
-// directly, so write a 32x32 PNG and rename. Modern browsers prefer
-// favicon.svg anyway; .ico is for legacy IE/old Edge.
-const favIcoBuf = await sharp(Buffer.from(iconSvg(48))).resize(48, 48).png().toBuffer();
+// favicon.ico — REAL multi-resolution ICO (16, 32, 48) generated via png-to-ico.
+// Previously this was a 48x48 PNG renamed to .ico — works in most browsers
+// but Firefox strict-MIME mode + some CDN configs serving the wrong
+// Content-Type would reject it. Real ICO container fixes that.
+const ico16 = await sharp(Buffer.from(iconSvg(16))).resize(16, 16).png().toBuffer();
+const ico32 = await sharp(Buffer.from(iconSvg(32))).resize(32, 32).png().toBuffer();
+const ico48 = await sharp(Buffer.from(iconSvg(48))).resize(48, 48).png().toBuffer();
+const favIcoBuf = await pngToIco([ico16, ico32, ico48]);
 writeFileSync(join(outDir, "favicon.ico"), favIcoBuf);
-console.log(`✓ favicon.ico (48x48 PNG renamed — browsers don't care)`);
+console.log(`✓ favicon.ico (multi-res 16/32/48 ICO container, ${(favIcoBuf.length / 1024).toFixed(1)} KB)`);
 
 console.log("\nDone. Commit the new public/*.png and the existing favicon.svg.");
