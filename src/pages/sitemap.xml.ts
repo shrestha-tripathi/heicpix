@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { site } from "../site.config";
+import { absoluteUrl } from "../lib/baseUrl";
 
 /**
  * Custom sitemap route — handmade because we want explicit control over
@@ -68,7 +68,7 @@ ${allPages
   .map(
     (p) =>
       `  <url>
-    <loc>${site.url}${p.path}</loc>
+    <loc>${absoluteUrl(p.path)}</loc>
     <lastmod>${p.lastmod}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>

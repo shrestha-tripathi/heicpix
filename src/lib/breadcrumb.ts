@@ -6,6 +6,7 @@
  * (e.g. "/heic-to-jpg-windows") — they get joined to site.url.
  */
 import { site } from "../site.config";
+import { absoluteUrl } from "./baseUrl";
 
 export interface CrumbInput {
   name: string;
@@ -24,7 +25,7 @@ export function breadcrumb(...crumbs: CrumbInput[]) {
       "@type": "ListItem",
       position: i + 2,
       name: c.name,
-      item: new URL(c.path, site.url).toString(),
+      item: absoluteUrl(c.path),
     })),
   ];
 

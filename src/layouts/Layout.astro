@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { site } from "../site.config";
+import { absoluteUrl } from "../lib/baseUrl";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 
@@ -29,7 +30,7 @@ const pageTitle = title === site.tagline
   ? `${site.name} — ${site.tagline}`
   : `${title} | ${site.name}`;
 
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).toString();
+const canonicalUrl = canonical ?? absoluteUrl(Astro.url.pathname);
 const ogImageUrl = new URL(ogImage, site.url).toString();
 
 // Always include the default Organization + WebSite schemas + any per-page schema
