@@ -59,7 +59,7 @@ export const site = {
   // Contact + legal (for /about, /contact, /privacy-policy, /terms)
   // Drives all hardcoded contact + jurisdiction info so a domain/operator
   // change is a one-line .env edit, not a 4-page rewrite.
-  contactEmail: env.PUBLIC_SITE_CONTACT_EMAIL ?? "hello@worksoffline.in",
+  contactEmail: env.PUBLIC_SITE_CONTACT_EMAIL ?? "shrestha.tripathi@gmail.com",
   githubRepo: env.PUBLIC_SITE_GITHUB_REPO ?? "https://github.com/shrestha-tripathi/heicpix",
   jurisdiction: env.PUBLIC_SITE_JURISDICTION ?? "India",
   author: env.PUBLIC_SITE_AUTHOR ?? "Shrestha Tripathi",
