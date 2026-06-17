@@ -56,9 +56,32 @@ const baseSchemas = [
   },
 ];
 
-const allSchemas = jsonLd
-  ? [...baseSchemas, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])]
-  : baseSchemas;
+// Auto-breadcrumb: Home -> <title> on every non-home page — BUT only when the
+// page hasn't already supplied its own BreadcrumbList via jsonLd. All 28 current
+// interior pages do (via lib/breadcrumb.ts), so this acts as a DRY safety net:
+// any future page that forgets a crumb trail auto-gets one, with NO duplicates
+// on existing pages. Skipped on the homepage where a breadcrumb would be noise.
+const jsonLdArr = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const hasOwnBreadcrumb = jsonLdArr.some(
+  (s) => (s as { "@type"?: string })["@type"] === "BreadcrumbList",
+);
+const breadcrumbSchema =
+  title && Astro.url.pathname !== "/" && !hasOwnBreadcrumb
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+          { "@type": "ListItem", position: 2, name: title, item: canonicalUrl },
+        ],
+      }
+    : null;
+
+const allSchemas = [
+  ...baseSchemas,
+  ...(breadcrumbSchema ? [breadcrumbSchema] : []),
+  ...jsonLdArr,
+];
 ---
 
 <!doctype html>
