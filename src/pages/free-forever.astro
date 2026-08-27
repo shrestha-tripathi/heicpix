@@ -30,11 +30,11 @@ const pledge = [
   },
   {
     promise: "No daily caps, no batch limits",
-    detail: `Convert 1 file or 5,000. The only limit is your device's memory. We don't track usage because we never see it.`,
+    detail: `Convert 1 file or 5,000. The only limit is your device's memory. We can't meter your conversions because they happen on your device and we never see them.`,
   },
   {
-    promise: "No ads, no tracking pixels, no fingerprinting",
-    detail: `Page loads once. Service worker caches the WASM. After that, the site works offline — nothing phones home. We use no third-party analytics that profile you.`,
+    promise: "No ads, no ad trackers, no fingerprinting",
+    detail: `No ad networks, no ad-retargeting pixels, no fingerprinting, no cross-site tracking, and no selling your data. We do run privacy-respecting aggregate analytics (Google Analytics 4, IP-anonymized) to count page views — that's it. Your photos never leave your device: the page loads once, the service worker caches the WASM, and conversion itself works offline.`,
   },
   {
     promise: "No watermark on output",
@@ -49,7 +49,7 @@ const pledge = [
 
 <Layout
   title={`Free forever — ${site.name}'s commitment`}
-  description={`${site.name} is free forever — no premium tier, no signup, no caps, no ads, no watermark, no tracking. Here's why we can promise that and how it stays sustainable.`}
+  description={`${site.name} is free forever — no premium tier, no signup, no caps, no ads, no ad trackers, no watermark. Just anonymous page-view analytics, and your photos never leave your device. Here's why we can promise that and how it stays sustainable.`}
   jsonLd={[jsonLd, breadcrumbLd]}
 >
   <article class="max-w-3xl mx-auto px-4 py-12">
