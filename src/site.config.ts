@@ -65,4 +65,8 @@ export const site = {
   author: env.PUBLIC_SITE_AUTHOR ?? "Shrestha Tripathi",
 } as const;
 
+/** Bump when content materially changes (llms.txt, JSON-LD dateModified). */
+export const lastUpdatedIso = "2026-09-24";
+export const lastUpdatedLabel = "September 24, 2026";
+
 export type SiteConfig = typeof site;

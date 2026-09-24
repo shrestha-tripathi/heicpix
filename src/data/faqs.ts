@@ -1,0 +1,161 @@
+import { site } from "../site.config";
+
+// Shared by /faq (FAQPage JSON-LD) and /llms-full.txt.
+export const faqs = [
+  {
+    q: "What is HEIC?",
+    a: "HEIC stands for High Efficiency Image Container — it's the photo format Apple uses by default on every iPhone since iOS 11 (2017). HEIC files are about half the size of JPGs at the same visual quality, which saves space on your iCloud, but they create a compatibility problem: most non-Apple software (Windows, Android, web browsers, email clients) can't open them natively.",
+  },
+  {
+    q: "What does HEIC stand for?",
+    a: "HEIC = High Efficiency Image Container. The image data inside is encoded with HEVC (the same codec used in 4K video), which is why files are so small. HEIF is the parent format — HEIC is Apple's specific HEIF-with-HEVC variant.",
+  },
+  {
+    q: "Is HEIC the same as HEIF?",
+    a: `Almost. HEIF (High Efficiency Image Format) is the underlying container standard. HEIC is Apple's name for HEIF files using the HEVC codec. Most iPhones save as .heic but the formats are functionally interchangeable. ${site.name} handles both — drop a .heic or .heif and it converts.`,
+  },
+  {
+    q: "How do I convert HEIC to JPG?",
+    a: `Drop your .heic file onto ${site.name} and it converts to JPG instantly. Drag-and-drop, or tap to pick photos from your camera roll. Conversion happens in your browser — your photos never get uploaded anywhere. You can convert hundreds at a time and download them as a zip.`,
+  },
+  {
+    q: "How do I open HEIC files on Windows?",
+    a: `You have two options: (1) Convert them to JPG using ${site.name} and Windows Photos will open them like any other image. (2) Install Microsoft's "HEIF Image Extensions" from the Microsoft Store, which adds HEIC support to Windows 10 and 11. Option 1 is more universal — converted JPGs work in every app, while the Microsoft codec only helps inside specific apps.`,
+  },
+  {
+    q: "How do I open HEIC files on a Mac?",
+    a: `macOS opens HEIC natively in Preview and Photos — that part already works. The pain comes when you try to send a HEIC to someone on Windows or Android, or upload to a website that doesn't accept HEIC. For those cases, drop the file into ${site.name} to get a universal JPG.`,
+  },
+  {
+    q: "Can Chromebooks open HEIC files?",
+    a: `ChromeOS does not open HEIC files natively — the Gallery app shows "format not supported." ${site.name} works perfectly in Chrome on Chromebook because everything runs in the browser. Drop your HEIC, get a JPG or PNG back, no install or extension needed.`,
+  },
+  {
+    q: "How do I open HEIC files on Android?",
+    a: `Newer Android versions (12+) on Pixel and Samsung devices can open HEIC files. Older Android versions and many file-manager apps still can't. The reliable fix: open ${site.name} in Chrome on your Android phone, drop the HEIC, get a JPG back. Works on every Android browser.`,
+  },
+  {
+    q: "Why is my iPhone saving photos as HEIC?",
+    a: "Because Apple made HEIC the default in iOS 11 (2017) to save storage space — HEIC files are about half the size of JPGs at the same visual quality. You can change this in Settings → Camera → Formats → \"Most Compatible\" to force JPG instead, but new photos will be larger.",
+  },
+  {
+    q: "How do I stop my iPhone from saving photos as HEIC?",
+    a: `Open Settings → Camera → Formats. Tap "Most Compatible" instead of "High Efficiency". New photos will save as JPG. Existing HEIC photos stay as HEIC — use ${site.name} to convert any you need to share with non-Apple users.`,
+  },
+  {
+    q: "Is HEIC better than JPEG?",
+    a: "For storage and quality: yes — HEIC files are about half the size of JPGs while looking identical. For compatibility: no — JPG opens everywhere; HEIC needs special support outside the Apple ecosystem. Use HEIC for archiving your own photo library; convert to JPG when sharing.",
+  },
+  {
+    q: "Which is better quality, HEIC or JPEG?",
+    a: "HEIC has better compression efficiency, so at the same file size HEIC looks visually cleaner than JPEG, especially in shadows and skies. At maximum quality both look indistinguishable to the human eye. Apple uses HEIC because it stores 16-bit color depth (vs JPEG's 8-bit), which matters for HDR photos and pro editing.",
+  },
+  {
+    q: "How do I send HEIC photos on WhatsApp?",
+    a: `WhatsApp accepts HEIC uploads on iOS, but they get auto-converted to JPG before sending. On Android and Web WhatsApp, HEIC support is spotty — your recipient might get a corrupted preview. The safer path: convert HEIC to JPG with ${site.name} first, then share the JPG on WhatsApp.`,
+  },
+  {
+    q: "Does Instagram support HEIC?",
+    a: `Instagram converts HEIC uploads on iOS, but Android Instagram sometimes rejects HEIC files. If you're posting from a non-Apple device or pasting a HEIC from Files into your story, convert to JPG first using ${site.name} to avoid upload errors.`,
+  },
+  {
+    q: "Does Google Photos support HEIC?",
+    a: "Google Photos stores HEIC files but displays them via on-the-fly JPG conversion. Downloading a HEIC from Google Photos via the web gives you a JPG; downloading via the mobile app preserves HEIC. If you've ever downloaded photos from Google Photos and gotten unexpected file types, that's why.",
+  },
+  {
+    q: "Can I convert HEIC to PNG?",
+    a: `Yes. ${site.name} has a JPG/PNG toggle above the drop zone — pick PNG before dropping files. PNG output is lossless (every pixel preserved exactly) and works great for editing, transparency, or archival. Files are about 3-5× larger than JPG.`,
+  },
+  {
+    q: "Can I convert HEIC to PDF?",
+    a: `Not directly in ${site.name} right now (it's on the roadmap). For now: convert HEIC to JPG in ${site.name}, then use any browser-based "JPG to PDF" tool to combine. Most JPG-to-PDF tools support multi-image PDFs natively.`,
+  },
+  {
+    q: "What's the best free HEIC converter?",
+    a: `${site.name} — we're biased, but here's the honest case: most "free" HEIC converters upload your photos to a server (privacy risk), cap you at 5 or 25 files per day (frustrating), show ads (cluttered), or require signup (annoying). ${site.name} is unlimited, browser-only, no signup, no ads, no upload, lifetime free.`,
+  },
+  {
+    q: "Why can't I open HEIC files on Windows 10 or Windows 11?",
+    a: `Windows doesn't ship HEIC support by default. You can install "HEIF Image Extensions" from the Microsoft Store (free) to add HEIC viewing to Photos and File Explorer thumbnails. Or convert the HEIC to JPG using ${site.name} — converted JPGs open in every Windows app instantly.`,
+  },
+  {
+    q: "How do I convert HEIC to JPG in bulk?",
+    a: `Drop a whole folder of HEIC files onto ${site.name} and they convert in parallel. There's no per-batch limit on desktop (you can drop 500 at once). On mobile, the practical limit is 50 photos at a time due to memory constraints. After conversion, click "Download .zip" to get all your JPGs in one file.`,
+  },
+  {
+    q: `Can ${site.name} convert HEIC files I receive from email or WhatsApp?`,
+    a: `Yes. Save the HEIC attachment to your Files or Downloads folder first, then drop it into ${site.name}. On iPhone, you can also use the Share Sheet — once you've installed ${site.name} as a PWA (Add to Home Screen), "${site.shortName}" appears as an option when you share a HEIC from anywhere.`,
+  },
+  {
+    q: `Does ${site.name} work offline?`,
+    a: `Yes — once the page loads, conversion runs entirely in your browser. You can disconnect from the internet and ${site.name} will keep converting. Installing as a PWA (Add to Home Screen) caches the app so even the page loads offline. Your photos never need internet access.`,
+  },
+  {
+    q: `Are my photos uploaded anywhere when I use ${site.name}?`,
+    a: `No. Everything happens on your device using WebAssembly. You can verify this by opening DevTools → Network tab while converting — you'll see zero outbound file uploads. There are no servers handling your photos because the conversion doesn't need any.`,
+  },
+  {
+    q: "Can I convert HEIC to WebP?",
+    a: `Yes — ${site.name} now supports four output formats: JPG, PNG, WebP, and AVIF. Pick WebP from the format toggle above the drop zone. WebP files are typically 25-35% smaller than JPG at the same visual quality, and they work in every modern browser (Chrome 32+, Firefox 65+, Safari 14+). It's the best format for posting photos on a blog or website.`,
+  },
+  {
+    q: "Can I convert HEIC to AVIF?",
+    a: `Yes, with one caveat: AVIF encoding in the browser requires Chrome 124+ or Edge 124+ (released April 2024). If you're on Firefox or Safari, the AVIF button is disabled and we suggest WebP instead. AVIF gives you files about half the size of JPG at the same visual quality — the best per-byte image format on the web today.`,
+  },
+  {
+    q: "What's the difference between JPG, PNG, WebP, and AVIF?",
+    a: `JPG is the universal default — works everywhere, smallest files for photos. PNG is lossless (perfect quality, but 3-5× larger than JPG). WebP is ~30% smaller than JPG with the same quality, works in all modern browsers. AVIF is ~50% smaller than JPG, but encoding is currently Chrome/Edge only. Read the full breakdown on our blog: "WebP vs JPG vs AVIF — which should you actually use?"`,
+  },
+  {
+    q: "How do I adjust the output quality?",
+    a: `For lossy formats (JPG, WebP, AVIF), a quality slider appears below the format toggle. Drag left for smaller files (more compression), right for higher quality. Sensible defaults: JPG 92%, WebP 85%, AVIF 65% — these match "visually indistinguishable from the original" for typical photos. PNG doesn't have a quality slider because it's lossless.`,
+  },
+  {
+    q: `Is ${site.name} really free, or is there a catch?`,
+    a: `Really free, no catch. No premium tier. No "free for 100 files a month." No "free for personal use, paid for commercial." No watermark on output. No ads. No signup. No data harvesting. We can promise this because ${site.name} costs almost nothing to run — conversion happens in your browser, so we don't pay for servers, storage, or bandwidth. Read our full free-forever pledge for the details.`,
+  },
+  {
+    q: `Will ${site.name} add a watermark to my converted photos?`,
+    a: `No. Never. Watermarks are how converters monetize captive users — we don't need to. Your JPG/PNG/WebP/AVIF files come out clean, pixel-perfect, and entirely yours. Output files have no metadata identifying ${site.name} either (we don't even put it in the EXIF comment field).`,
+  },
+  {
+    q: `Do I need to sign up to use ${site.name}?`,
+    a: `No. There's no signup, no account, no email-capture wall, no "create a free account to download." Open the page, drop your files, save the converted files. That's the whole flow. We don't have a login system to build because we have nothing to gate.`,
+  },
+  {
+    q: `Why is ${site.name} free forever?`,
+    a: `Because the architecture demands almost nothing to run. Conversion happens in your browser via WebAssembly — no server processes your files, so there's no per-conversion CPU bill. No file storage means no S3 bill. Cloudflare Pages serves the static site for free. Total cost: ~₹500/year for the domain. That's not a business that needs your money to survive.`,
+  },
+  {
+    q: `What's the file size limit on ${site.name}?`,
+    a: `There's no hard size limit per file. The practical limit is your device's memory: ~50 photos at a time on mobile, 500+ on desktop. Very large files (60+ megapixel iPhone Pro photos) take a few extra seconds each. If you hit memory limits, just convert in smaller batches.`,
+  },
+  {
+    q: `Can I view a HEIC without converting it?`,
+    a: `Yes — use our HEIC Viewer. Drop a .heic file and it renders the photo right in your browser, no download required. Useful when you just want to peek at what someone sent you. The viewer uses the same WebAssembly decoder as the converter, so your file never leaves your device.`,
+  },
+  {
+    q: `What metadata is stored inside an iPhone HEIC photo?`,
+    a: `iPhone HEICs typically store: camera model + iOS version, lens used (wide/ultra-wide/tele), focal length, ISO, aperture, shutter speed, flash mode, capture date and time, and — if Location Services is on — the GPS coordinates of where you took the photo. You can see all of it with our HEIC EXIF Reader, which parses the metadata in your browser without uploading anything.`,
+  },
+  {
+    q: `How do I remove GPS coordinates from iPhone photos?`,
+    a: `Use the Strip HEIC EXIF tool. Drop your HEIC, get a clean JPG with no GPS, no camera info, no date, no metadata of any kind. It's the safe-to-share version — useful before posting publicly on social media, sending to a journalist, or selling on Marketplace.`,
+  },
+  {
+    q: `Why does Slack reject my iPhone HEIC photos?`,
+    a: `Slack's media preview pipeline doesn't support HEIC. The file uploads but recipients can't preview it inline. Convert to JPG first with ${site.name} and the photo embeds normally in every Slack client. See our HEIC-for-Slack page for the full workflow.`,
+  },
+  {
+    q: `Why doesn't Discord show HEIC photo previews?`,
+    a: `Discord's media proxy generates previews server-side using an older libvips that lacks HEIF support. The file uploads but renders as a broken thumbnail. Convert to JPG (or WebP) first — both work fine in Discord previews and embeds.`,
+  },
+  {
+    q: `Why does WordPress block .heic uploads?`,
+    a: `WordPress maintains an allowlist of MIME types in wp_check_filetype_and_ext(). HEIC isn't on it because PHP's default GD image library can't process HEIC — uploading would succeed but thumbnail generation would fail. Converting to JPG (or WebP/AVIF in modern WordPress versions) fixes it without needing plugins or wp-config edits.`,
+  },
+  {
+    q: `Does Canva accept HEIC uploads?`,
+    a: `Canva's web editor doesn't accept HEIC outside of Safari (which has native HEIC support). On Chrome, Firefox, Edge — and Canva's desktop and mobile apps — HEIC uploads fail. Convert to JPG, PNG, or WebP first with ${site.name} and the file appears in your Canva media library normally.`,
+  },
+];
