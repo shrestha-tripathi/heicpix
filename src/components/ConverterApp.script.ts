@@ -13,6 +13,7 @@ import {
   maxBatchSize,
   optimalWorkerCount,
 } from "../lib/capabilities";
+import { registerWebMcpTools, text } from "../lib/webmcp";
 
 // ------------------------------------------------------------------ refs
 
@@ -514,4 +515,80 @@ function formatBytes(b: number): string {
 
 if (dropzone && fileInput && fileList && batchSummary && saveAllBar) {
   init();
+  registerAgentTools();
+}
+
+// ------------------------------------------------------------------ WebMCP
+// Agent tools only drive the same controls a human uses (format buttons,
+// quality slider, file picker). No conversion logic lives here, and no
+// file ever leaves the page.
+function registerAgentTools(): void {
+  registerWebMcpTools([
+    {
+      name: "convert_heic",
+      description:
+        "Configure the in-browser HEIC converter (output format + quality) and open the file picker so the user can choose HEIC/HEIF photos. Conversion runs locally; nothing uploads. Metadata (EXIF/GPS) is always stripped because output is re-encoded from pixels.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          format: { type: "string", enum: ["jpg", "png", "webp", "avif"], description: "Output format (default jpg)." },
+          quality: { type: "number", minimum: 0.3, maximum: 1, description: "Lossy quality 0.3–1 (default 0.92). Ignored for PNG." },
+          stripExif: { type: "boolean", description: "Strip EXIF/GPS. Always true in practice; false cannot be honoured." },
+        },
+      },
+      execute: async (args) => {
+        const format = typeof args.format === "string" ? args.format.toLowerCase().replace("jpeg", "jpg") : "jpg";
+        if (!VALID_FORMATS.has(format)) return text(`Unsupported format "${format}". Use jpg, png, webp or avif.`);
+        const btn = document.querySelector<HTMLButtonElement>(`button[data-format="${format}"]`);
+        if (!btn) return text("Format toggle not found on this page.");
+        if (btn.disabled) return text(`${format.toUpperCase()} encoding isn't supported in this browser. Try jpg or webp.`);
+        btn.click();
+        if (typeof args.quality === "number") {
+          const q = Math.min(1, Math.max(0.3, args.quality));
+          const slider = document.querySelector<HTMLInputElement>('[data-format-widget] input[type="range"]');
+          if (slider) {
+            slider.value = String(q);
+            slider.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+        const notes: string[] = [];
+        if (args.stripExif === false) notes.push("Note: metadata cannot be preserved; converted files never include EXIF/GPS.");
+        let opened = false;
+        try {
+          fileInput.click();
+          opened = true;
+        } catch {
+          /* picker needs a user gesture in some browsers */
+        }
+        dropzone.scrollIntoView({ behavior: "smooth", block: "center" });
+        const done = doneItems(items).length;
+        return text(
+          `Set output to ${currentFormat().toUpperCase()} at ${Math.round(currentQuality() * 100)}% quality. ` +
+            (opened ? "File picker opened — ask the user to select their HEIC photos (or drop them on the page)." : "Ask the user to click the drop zone or drop HEIC photos on it.") +
+            ` Queue: ${items.length} file(s), ${done} done. ${notes.join(" ")}`.trim(),
+        );
+      },
+    },
+    {
+      name: "get_conversion_status",
+      description: "Report progress of the current HEIC conversion batch.",
+      inputSchema: { type: "object", properties: {} },
+      execute: async () => {
+        const counts: Record<string, number> = {};
+        for (const i of items) counts[i.status.kind] = (counts[i.status.kind] ?? 0) + 1;
+        const parts = Object.entries(counts).map(([k, v]) => `${v} ${k}`);
+        return text(items.length ? `${items.length} file(s): ${parts.join(", ")}.` : "No files queued yet.");
+      },
+    },
+    {
+      name: "download_converted_zip",
+      description: "Download all converted files as a .zip (runs locally).",
+      inputSchema: { type: "object", properties: {} },
+      execute: async () => {
+        if (doneItems(items).length === 0) return text("Nothing converted yet.");
+        btnDownloadZip.click();
+        return text(`Started .zip download of ${doneItems(items).length} file(s).`);
+      },
+    },
+  ]);
 }
