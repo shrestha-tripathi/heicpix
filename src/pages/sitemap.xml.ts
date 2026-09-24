@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { absoluteUrl } from "../lib/baseUrl";
+import { pseo } from "../data/pseo";
 
 /**
  * Custom sitemap route — handmade because we want explicit control over
@@ -47,6 +48,8 @@ export const GET: APIRoute = async () => {
     { path: "/heic-for-outlook", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-for-canva", priority: "0.7", changefreq: "monthly" },
     { path: "/heic-for-wordpress", priority: "0.7", changefreq: "monthly" },
+    // Data-driven landing pages (src/data/pseo*.ts)
+    ...pseo.map((p) => ({ path: `/${p.slug}`, priority: "0.7", changefreq: "monthly" })),
   ];
 
   const posts = await getCollection("blog", ({ data }) => !data.draft);
