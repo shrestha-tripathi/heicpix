@@ -1,0 +1,103 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site, lastUpdatedIso, lastUpdatedLabel } from "../site.config";
+import { b } from "../lib/baseUrl";
+import { breadcrumb } from "../lib/breadcrumb";
+import { pseo, type PseoPage } from "../data/pseo";
+
+export function getStaticPaths() {
+  return pseo.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props as { page: PseoPage };
+const titleOf = (path: string) =>
+  pseo.find((p) => `/${p.slug}` === path)?.crumb ??
+  path.replace(/^\/(blog\/)?/, "").replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase());
+
+const howTo = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: page.h1,
+  description: page.description,
+  totalTime: "PT1M",
+  dateModified: lastUpdatedIso,
+  step: page.steps.map((s, i) => ({ "@type": "HowToStep", position: i + 1, name: s.name, text: s.text })),
+};
+const faqLd = page.faqs?.length
+  ? {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: page.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    }
+  : null;
+const crumbLd = breadcrumb({ name: page.crumb, path: `/${page.slug}` });
+const jsonLd = faqLd ? [howTo, faqLd, crumbLd] : [howTo, crumbLd];
+const btn =
+  "inline-block px-6 py-3 rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-semibold hover:bg-[var(--color-accent-hover)] transition-colors";
+---
+
+<Layout title={page.title} description={page.description} jsonLd={jsonLd}>
+  <div class="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    <header class="mb-8">
+      <p class="text-sm text-[var(--color-muted)] mb-2">
+        <a href={b("/")} class="hover:text-[var(--color-fg)]">{site.name}</a>
+        <span class="mx-1">/</span>
+        <span>{page.crumb}</span>
+      </p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">{page.h1}</h1>
+      <p class="text-lg text-[var(--color-muted)]">{page.intro}</p>
+    </header>
+
+    <aside class="mb-10 p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-sm text-[var(--color-muted)]" aria-label="TL;DR">
+      <p><strong class="text-[var(--color-fg)]">TL;DR:</strong> {page.tldr}</p>
+      <p class="mt-2 text-xs">Nothing uploads · unlimited · works offline · last updated <time datetime={lastUpdatedIso}>{lastUpdatedLabel}</time></p>
+    </aside>
+
+    {page.sections.map((s) => (
+      <section class="mb-10">
+        <h2 class="text-2xl font-bold mb-4">{s.h2}</h2>
+        {s.body && <p class="text-[var(--color-muted)] leading-relaxed mb-3">{s.body}</p>}
+        {s.list && (
+          <ul class="list-disc pl-6 space-y-1.5 text-[var(--color-muted)]">
+            {s.list.map((li) => <li>{li}</li>)}
+          </ul>
+        )}
+      </section>
+    ))}
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">How to do it</h2>
+      <ol class="list-decimal pl-6 space-y-2 text-[var(--color-muted)] mb-6">
+        {page.steps.map((s) => (
+          <li><strong class="text-[var(--color-fg)]">{s.name}.</strong> {s.text}</li>
+        ))}
+      </ol>
+      <a href={b("/")} class={btn}>{page.cta}</a>
+    </section>
+
+    {page.faqs?.length ? (
+      <section class="mb-10">
+        <h2 class="text-2xl font-bold mb-4">Questions</h2>
+        {page.faqs.map((f) => (
+          <div class="mb-4">
+            <h3 class="font-semibold mb-1">{f.q}</h3>
+            <p class="text-[var(--color-muted)] leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </section>
+    ) : null}
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4">Related</h2>
+      <ul class="list-disc pl-6 space-y-1.5">
+        {page.related.map((r) => (
+          <li><a href={b(r)} class="text-[var(--color-accent)] hover:underline">{titleOf(r)}</a></li>
+        ))}
+      </ul>
+    </section>
+
+    <div class="text-center mt-12">
+      <a href={b("/")} class={btn}>{page.cta}</a>
+    </div>
+  </div>
+</Layout>
